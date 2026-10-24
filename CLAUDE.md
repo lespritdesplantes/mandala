@@ -3,8 +3,14 @@
 Site vitrine de la ferme de Cécile Anselmino (Saint-Loubert, 33) : production biologique de plantes aromatiques et médicinales (PPAM), cueillette sauvage, transformation artisanale.
 
 - Domaine : lespritdesplantes.org (registrar OVH, DNS chez Cloudflare)
-- Hébergement : Cloudflare Pages, déployé depuis ce dépôt GitHub (branche `main` = production)
+- Hébergement : **Cloudflare Worker avec Static Assets** (Worker `mandala-web`, configuré dans `wrangler.jsonc`), déployé depuis ce dépôt GitHub. Ce n'est **pas** Cloudflare Pages.
 - Langue : français uniquement
+
+## Branches
+
+- `main` = **production**. On n'y fusionne que du contenu validé.
+- `preview` = pages produits en cours. Elles contiennent encore des valeurs provisoires (badges « À CONFIRMER ») et des descriptions en attente de validation (voir `REFORMULATIONS.md`). On fusionne `preview` dans `main` une fois les points tranchés, et jamais avant.
+- L'historique ne contient ni les photos originales ni les vidéos (nettoyé avant le premier push, le dépôt est public). Ne pas les réintroduire.
 
 ## Stack
 
@@ -12,7 +18,7 @@ Site vitrine de la ferme de Cécile Anselmino (Saint-Loubert, 33) : production b
 - Les produits sont des **content collections** Astro, un fichier Markdown par produit dans `src/content/produits/` : nom, nom latin, gamme, prix, contenance, description, photos.
 - Les images passent par `astro:assets`, avec sortie WebP/AVIF, `srcset` responsive et lazy-loading.
 - **Les vidéos ne vont pas dans Git** : Cloudflare Stream, R2 ou YouTube intégré. Il faut prévoir un composant `<Video>` qui accepte une URL.
-- Commandes : `npm run dev`, `npm run build`. Le build Cloudflare Pages utilise `npm run build` et le dossier de sortie `dist`.
+- Commandes : `npm run dev`, `npm run build`, `npm run photos`. Le déploiement lance `npm run build`, puis le Worker sert le dossier `dist/` (`assets.directory`). Les URL inconnues renvoient `dist/404.html` (`not_found_handling: "404-page"`).
 
 ## Charte graphique (tirée du logo)
 
@@ -72,4 +78,4 @@ Il faut renommer les fichiers en slug ASCII, sans espaces ni accents, et ne pas 
 - Lighthouse au-dessus de 90 partout.
 - SEO : `title` et `description` par page, Open Graph avec image, `sitemap.xml`, données structurées `LocalBusiness` et `Product`.
 - Pas de cookies ni de traceurs tiers. Si une mesure d'audience est nécessaire, utiliser Cloudflare Web Analytics.
-- Formulaire de contact : Cloudflare Pages Functions avec envoi par e-mail, ou simple lien `mailto:` dans un premier temps.
+- Formulaire de contact : simple lien `mailto:` dans un premier temps. Pour un vrai formulaire, il faudra ajouter un script au Worker (clé `main` dans `wrangler.jsonc`) avec envoi par e-mail. Les Pages Functions ne s'appliquent pas ici.
