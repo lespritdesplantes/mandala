@@ -1,0 +1,135 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import FilAriane from '../components/FilAriane.astro';
+import { SITE } from '../data/site';
+---
+
+<BaseLayout
+  title="Mentions légales"
+  description="Mentions légales du site lespritdesplantes.org : éditrice, hébergeur, crédits et données personnelles."
+>
+  <div class="conteneur section legal">
+    <FilAriane
+      elements={[{ label: 'Accueil', href: '/' }, { label: 'Mentions légales', href: '/mentions-legales/' }]}
+    />
+    <h1>Mentions légales</h1>
+
+    <section aria-labelledby="editeur">
+      <h2 id="editeur">Éditrice du site</h2>
+      <p>
+        Le site <strong>lespritdesplantes.org</strong> est édité par {SITE.productrice},{' '}
+        {SITE.formeJuridique.charAt(0).toLowerCase() + SITE.formeJuridique.slice(1)} «&nbsp;{SITE.nom}&nbsp;».
+      </p>
+      <dl>
+        <div>
+          <dt>Adresse</dt>
+          <dd>{SITE.adresse.rue}, {SITE.adresse.codePostal} {SITE.adresse.commune}, France</dd>
+        </div>
+        <div>
+          <dt>E-mail</dt>
+          <dd><a href={`mailto:${SITE.email}`}>{SITE.email}</a></dd>
+        </div>
+        <div>
+          <dt>SIREN</dt>
+          <dd>{SITE.siren}</dd>
+        </div>
+        <div>
+          <dt>TVA intracommunautaire</dt>
+          <dd>{SITE.tva}</dd>
+        </div>
+        <div>
+          <dt>Directrice de la publication</dt>
+          <dd>{SITE.productrice}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section aria-labelledby="hebergeur">
+      <h2 id="hebergeur">Hébergeur</h2>
+      <p>
+        {SITE.hebergeur.nom}<br />
+        {SITE.hebergeur.adresse}<br />
+        <a href={SITE.hebergeur.site}>{SITE.hebergeur.site.replace('https://', '')}</a>
+      </p>
+    </section>
+
+    <section aria-labelledby="credits">
+      <h2 id="credits">Crédits</h2>
+      <dl>
+        <div>
+          <dt>Logo et flyer</dt>
+          <dd>{SITE.credits.graphisme}</dd>
+        </div>
+        <div>
+          <dt>Conception et réalisation du site</dt>
+          <dd>{SITE.credits.site}</dd>
+        </div>
+      </dl>
+      <p>
+        Les textes, photographies et le logo présents sur ce site sont protégés. Toute reproduction, même
+        partielle, nécessite l’accord préalable de l’éditrice.
+      </p>
+    </section>
+
+    <section aria-labelledby="donnees">
+      <h2 id="donnees">Données personnelles</h2>
+      <p>
+        Ce site <strong>n’utilise aucun cookie ni aucun traceur</strong>, et ne collecte aucune donnée
+        personnelle lors de la navigation.
+      </p>
+      <p>
+        Si vous écrivez à <a href={`mailto:${SITE.email}`}>{SITE.email}</a>, votre adresse e-mail et le contenu
+        de votre message ne sont utilisés que pour vous répondre. Ils ne sont ni cédés ni utilisés à d’autres fins.
+      </p>
+      <p>
+        Conformément au Règlement général sur la protection des données (RGPD) et à la loi Informatique et
+        Libertés, vous disposez d’un droit d’accès, de rectification et de suppression des données vous
+        concernant. Pour l’exercer, écrivez à <a href={`mailto:${SITE.email}`}>{SITE.email}</a>. Vous pouvez
+        également adresser une réclamation à la CNIL (<a href="https://www.cnil.fr">cnil.fr</a>).
+      </p>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .legal {
+    max-width: 48rem;
+  }
+
+  .legal h1 {
+    margin-top: 1.25rem;
+  }
+
+  .legal section + section {
+    margin-top: 2.5rem;
+  }
+
+  .legal h2 {
+    font-size: 2.2rem;
+  }
+
+  dl {
+    margin: 0 0 1rem;
+  }
+
+  dl div {
+    display: grid;
+    gap: 0 1.5rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgb(2 43 66 / 0.1);
+  }
+
+  @media (min-width: 40rem) {
+    dl div {
+      grid-template-columns: 15rem 1fr;
+    }
+  }
+
+  dt {
+    font-weight: 700;
+  }
+
+  dd {
+    margin: 0;
+  }
+</style>

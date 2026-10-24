@@ -1,7 +1,6 @@
 ---
 import { Image } from 'astro:assets';
 import logo from '../assets/logo.png';
-import AConfirmer from './AConfirmer.astro';
 import { formaterPrix, prixMinimum, urlProduit, type Produit } from '../lib/produits';
 
 interface Props {
@@ -11,8 +10,9 @@ interface Props {
 const { produit } = Astro.props;
 const { nom, nomLatin, accroche, photos, prix, usageExterne } = produit.data;
 const photo = photos[0];
-const plusieursPrix = prix.length > 1;
-const prixProvisoire = prix.some((p) => p.aConfirmer);
+// Les prix marqués aConfirmer ne sont jamais affichés publiquement
+const prixConnus = prix.filter((p) => !p.aConfirmer);
+const plusieursPrix = prixConnus.length > 1;
 ---
 
 <article class="carte">
@@ -35,9 +35,11 @@ const prixProvisoire = prix.some((p) => p.aConfirmer);
     {nomLatin && <p class="carte__latin">{nomLatin}</p>}
     {accroche && !nomLatin && <p class="carte__accroche">{accroche}</p>}
     <p class="carte__prix">
-      {plusieursPrix && 'à partir de '}
-      {formaterPrix(prixMinimum(produit))}
-      {prixProvisoire && <AConfirmer />}
+      {
+        prixConnus.length === 0
+          ? 'Prix sur demande'
+          : `${plusieursPrix ? 'à partir de ' : ''}${formaterPrix(prixMinimum(prixConnus))}`
+      }
     </p>
   </div>
 </article>

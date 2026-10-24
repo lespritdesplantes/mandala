@@ -8,8 +8,19 @@ Site vitrine de la ferme de Cécile Anselmino (Saint-Loubert, 33) : production b
 
 ## Branches
 
-- `main` = **production**. On n'y fusionne que du contenu validé.
-- `preview` = pages produits en cours. Elles contiennent encore des valeurs provisoires (badges « À CONFIRMER ») et des descriptions en attente de validation (voir `REFORMULATIONS.md`). On fusionne `preview` dans `main` une fois les points tranchés, et jamais avant.
+- `main` = **production** (lespritdesplantes.org). `preview` est tenue à jour avec `main`.
+- Avant chaque push : `npm run build && npm run verifier`. Le script `scripts/verifier-dist.mjs` contrôle les liens internes et l'absence de « À CONFIRMER » et des termes interdits dans `dist/`.
+
+## Valeurs non validées : jamais publiques
+
+Les points en suspens restent **marqués dans les fichiers de contenu**, mais ne s'affichent jamais :
+- `aConfirmer: true` sur un prix : la fiche affiche « Prix sur demande, voir sur les marchés », et aucune offre n'apparaît dans les données structurées.
+- `compositionAConfirmer: true` : seuls les ingrédients communs aux sources figurent dans `composition` ; les versions complètes sont notées dans `aConfirmer`.
+- `posologieAConfirmer: true` : la fiche affiche « Posologie : nous consulter ».
+- `reformulation: ALC-…` sans `usage` : le corps de la fiche est une présentation neutre (plante, partie utilisée, origine, fabrication). Le texte validé de `REFORMULATIONS.md` va dans `usage`.
+- Liste `aConfirmer` : notes internes, jamais rendues.
+- Photos dont l'étiquette porte une allégation lisible : retirées, référence gardée en commentaire YAML.
+- Pas de PDF « usages et précautions » tant qu'il contient les anciennes allégations.
 - L'historique ne contient ni les photos originales ni les vidéos (nettoyé avant le premier push, le dépôt est public). Ne pas les réintroduire.
 
 ## Stack
@@ -45,7 +56,7 @@ Site vitrine de la ferme de Cécile Anselmino (Saint-Loubert, 33) : production b
 - `/jardin-et-atelier/` : galerie photos et vidéos
 - `/ou-nous-trouver/` : boutiques et marchés ou événements datés (les événements passés sont masqués automatiquement)
 - `/contact/`
-- `/mentions-legales/` : obligatoire (nom, adresse, SIRET, hébergeur Cloudflare, crédits : création graphique Annabelle Caley)
+- `/mentions-legales/` : obligatoire. Les informations légales (adresse, SIREN, TVA, hébergeur, crédits) sont centralisées dans `src/data/site.ts`. Pas de téléphone publié pour l'instant.
 
 ## Contenus sources
 

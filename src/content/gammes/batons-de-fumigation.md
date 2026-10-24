@@ -3,7 +3,7 @@ nom: Bâtons de fumigation
 ordre: 5
 accroche: Fagots de plantes séchées liés à la main, pour vos rituels et cérémonies.
 photo: ../../assets/photos/batons-de-fumigation/fumi-oui.jpg
-photoAlt: Bâtons de fumigation de sauge, de lavande et de soucis liés au fil blanc, dans une corbeille
+photoAlt: Bâtons de fumigation de feuillage vert, de fleurs violettes et orangées liés au fil blanc, dans une corbeille
 reformulation: FUM-1
 ---
 

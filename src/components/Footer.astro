@@ -9,11 +9,12 @@ const annee = new Date().getFullYear();
     <div class="pied__marque">
       <p class="pied__nom">Mandala</p>
       <p class="pied__devise">L’esprit des plantes</p>
-      <p>
+      <address>
         {SITE.productrice}<br />
-        {SITE.adresse.commune} ({SITE.adresse.codePostal.slice(0, 2)})<br />
-        <a href={`tel:${SITE.telephoneIntl}`}>{SITE.telephone}</a>
-      </p>
+        {SITE.adresse.rue}<br />
+        {SITE.adresse.codePostal} {SITE.adresse.commune}<br />
+        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+      </address>
     </div>
 
     <nav aria-labelledby="pied-produits">
@@ -46,7 +47,9 @@ const annee = new Date().getFullYear();
 
   <div class="conteneur pied__bas">
     <p>Biologique · Éthique · Artisanal</p>
-    <p>© {annee} {SITE.nom} · Création graphique : {SITE.creditGraphique}</p>
+    <p>
+      © {annee} {SITE.nom} · Logo : {SITE.credits.graphisme} · Site : {SITE.credits.site}
+    </p>
   </div>
 </footer>
 
@@ -102,6 +105,10 @@ const annee = new Date().getFullYear();
     text-transform: uppercase;
     color: var(--ocre);
     margin-bottom: 1rem;
+  }
+
+  .pied address {
+    font-style: normal;
   }
 
   .pied ul {

@@ -16,10 +16,11 @@ composition:
 aConfirmer:
   - "L'étiquette lisible sur les photos porte un terme exclu du site (voir BAU-1)."
 photos:
-  - src: ../../../assets/photos/baumes/baume-gros.jpg
-    alt: "Pot de baume à l'hélichryse, format familial, devant des tiges d'hélichryse"
-  - src: ../../../assets/photos/baumes/baume-petit.jpg
-    alt: "Pot de baume à l'hélichryse, format voyage de 32 mL"
+  - src: ../../../assets/photos/huiles-de-massage/helichryse.jpg
+    alt: "Fleurs jaunes d'hélichryse en plein soleil, ingrédient du baume"
+# Photos retirées (étiquette portant une allégation lisible, voir REFORMULATIONS.md) :
+#   ../../../assets/photos/baumes/baume-gros.jpg
+#   ../../../assets/photos/baumes/baume-petit.jpg
 ---
 
 Ingrédients issus de l'agriculture biologique.

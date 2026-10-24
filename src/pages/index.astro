@@ -2,7 +2,9 @@
 import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PictureDirection from '../components/PictureDirection.astro';
+import IconeEngagement from '../components/IconeEngagement.astro';
 import { SITE } from '../data/site';
+import { localBusiness } from '../data/jsonld';
 
 import heroPaysage from '../assets/photos/jardin-et-atelier/paysage/jardin.jpg';
 import heroPortrait from '../assets/photos/jardin-et-atelier/portrait/cueillette-camomille.jpg';
@@ -18,20 +20,23 @@ import { gammesTriees, urlGamme } from '../lib/produits';
 const valeurs = [
   {
     titre: 'Biologique',
+    icone: 'biologique',
     texte:
       'J’utilise les ressources naturelles avec sobriété : pour fertiliser, arroser, protéger les cultures. Je pratique une agriculture favorisante : je favorise un milieu, pour permettre à l’Intelligence Naturelle de développer le Vivant.',
   },
   {
     titre: 'Éthique',
+    icone: 'ethique',
     texte:
       'L’esprit des plantes est écologique, coopératif, ancré sur un territoire. Les matières premières sont biologiques et locales (huile de chanvre), ou équitables (huile de coco, résines).',
   },
   {
     titre: 'Artisanal',
+    icone: 'artisanal',
     texte:
       'La fabrication est consciencieuse : tout est artisanal. Le résultat se retrouve concentré dans les flacons : les propriétés aromatiques et médicinales des plantes traitées avec amour offrent une qualité optimale des produits.',
   },
-];
+] as const;
 
 const mosaique = [
   { src: cueilletteHelichryse, alt: 'Panier en osier rempli de fleurs jaunes d’hélichryse fraîchement cueillies' },
@@ -43,25 +48,7 @@ const mosaique = [
 
 const gammes = await gammesTriees();
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'LocalBusiness',
-  '@id': `${SITE.url}/#entreprise`,
-  name: SITE.nom,
-  description: SITE.description,
-  url: SITE.url,
-  logo: `${SITE.url}/logo.png`,
-  image: `${SITE.url}/logo.png`,
-  telephone: SITE.telephoneIntl,
-  founder: { '@type': 'Person', name: SITE.productrice },
-  address: {
-    '@type': 'PostalAddress',
-    addressLocality: SITE.adresse.commune,
-    postalCode: SITE.adresse.codePostal,
-    addressRegion: SITE.adresse.region,
-    addressCountry: SITE.adresse.pays,
-  },
-};
+const jsonLd = localBusiness;
 ---
 
 <BaseLayout
@@ -125,11 +112,9 @@ const jsonLd = {
       <h2 id="valeurs-titre" class="titre-souligne titre-souligne--centre valeurs__titre">Mes engagements</h2>
       <ul class="valeurs" role="list">
         {
-          valeurs.map(({ titre, texte }, i) => (
+          valeurs.map(({ titre, icone, texte }) => (
             <li class="valeur">
-              <span class="valeur__numero" aria-hidden="true">
-                {String(i + 1).padStart(2, '0')}
-              </span>
+              <IconeEngagement nom={icone} />
               <h3>{titre}</h3>
               <p>{texte}</p>
             </li>
@@ -148,7 +133,7 @@ const jsonLd = {
       <ul class="mosaique" role="list">
         {
           mosaique.map(({ src, alt }) => (
-            <li>
+            <li class="cadre-zoom">
               <Image src={src} alt={alt} widths={[400, 640, 960]} sizes="(min-width: 48rem) 33vw, 50vw" />
             </li>
           ))
@@ -328,18 +313,6 @@ const jsonLd = {
     box-shadow: var(--ombre);
   }
 
-  .valeur__numero {
-    display: inline-grid;
-    place-items: center;
-    width: 2.75rem;
-    height: 2.75rem;
-    margin-bottom: 0.75rem;
-    border-radius: 50%;
-    background: var(--ocre);
-    font-weight: 800;
-    font-size: 0.9rem;
-  }
-
   .valeur h3 {
     font-size: 2.2rem;
   }
@@ -401,12 +374,6 @@ const jsonLd = {
     }
   }
 
-  .mosaique :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: calc(var(--rayon) * 0.75);
-  }
 
   /* Gammes */
   .gammes {

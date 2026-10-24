@@ -20,4 +20,4 @@ photos:
     alt: "Boîte en bambou de bâtons d'encens Sauge – Benjoin"
 ---
 
-Parfum profond, puissant, qui évoque « l'odeur de l'église ».
+Parfum profond, puissant, qui évoque « l'odeur de l'église ».

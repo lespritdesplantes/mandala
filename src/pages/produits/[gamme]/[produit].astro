@@ -1,12 +1,12 @@
 ---
 import type { GetStaticPaths } from 'astro';
 import { Image, getImage } from 'astro:assets';
+import logo from '../../../assets/logo.png';
 import { getCollection, getEntry, render } from 'astro:content';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import FilAriane from '../../../components/FilAriane.astro';
 import CarteProduit from '../../../components/CarteProduit.astro';
 import AvertissementAlcoolature from '../../../components/AvertissementAlcoolature.astro';
-import AConfirmer from '../../../components/AConfirmer.astro';
 import {
   formaterPrix,
   produitsDeLaGamme,
@@ -37,6 +37,8 @@ const description = `${d.nom}${d.nomLatin ? ` (${d.nomLatin})` : ''} – ${gamme
 
 // Données structurées : pas d'offre tant qu'un prix reste à confirmer
 const prixConfirmes = d.prix.every((p) => !p.aConfirmer);
+// Les prix marqués aConfirmer ne sont jamais affichés publiquement
+const prixAffiches = d.prix.filter((p) => !p.aConfirmer);
 const imagesLd = await Promise.all(
   d.photos.map(async ({ src }) => new URL((await getImage({ src, width: 1200, format: 'jpg' })).src, SITE.url).href),
 );
@@ -99,11 +101,9 @@ const jsonLd = [
             fetchpriority="high"
           />
         ) : (
-          <p class="fiche__sans-photo">
-            <span>
-              Photo à venir <AConfirmer />
-            </span>
-          </p>
+          <div class="fiche__sans-photo">
+            <Image src={logo} alt="" width={140} />
+          </div>
         )
       }
       {
@@ -134,52 +134,34 @@ const jsonLd = [
         )
       }
 
-      <table class="prix">
-        <caption class="visually-hidden">Prix</caption>
-        <tbody>
-          {
-            d.prix.map((p) => (
-              <tr>
-                <th scope="row">{p.libelle}</th>
-                <td>
-                  {formaterPrix(p.montant)}
-                  {p.aConfirmer && <AConfirmer />}
-                </td>
-              </tr>
-            ))
-          }
-        </tbody>
-      </table>
+      {
+        prixAffiches.length > 0 && (
+          <table class="prix">
+            <caption class="visually-hidden">Prix</caption>
+            <tbody>
+              {prixAffiches.map((p) => (
+                <tr>
+                  <th scope="row">{p.libelle}</th>
+                  <td>{formaterPrix(p.montant)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )
+      }
+      {
+        !prixConfirmes && (
+          <p class="prix-sur-demande">
+            Prix sur demande, voir <a href="/ou-nous-trouver/">sur les marchés</a>.
+          </p>
+        )
+      }
 
       <div class="contenu">
         <Content />
-        {
-          d.usage ? (
-            <p>{d.usage}</p>
-          ) : (
-            d.reformulation && (
-              <p class="en-attente">
-                Description en attente de validation <span class="ref">(réf. {d.reformulation})</span>
-              </p>
-            )
-          )
-        }
+        {/* Texte d'usage affiché seulement une fois sa reformulation validée (REFORMULATIONS.md) */}
+        {d.usage && <p>{d.usage}</p>}
       </div>
-
-      {
-        d.aConfirmer.length > 0 && (
-          <div class="points">
-            <p>
-              <AConfirmer />
-            </p>
-            <ul>
-              {d.aConfirmer.map((point) => (
-                <li>{point}</li>
-              ))}
-            </ul>
-          </div>
-        )
-      }
 
       <a class="bouton" href="/ou-nous-trouver/">Où trouver ce produit</a>
     </div>
@@ -190,7 +172,6 @@ const jsonLd = [
           <section aria-labelledby="composition">
             <h2 id="composition">
               {d.composition ? 'Composition' : 'Partie utilisée'}
-              {d.compositionAConfirmer && <AConfirmer />}
             </h2>
             {d.partieUtilisee && d.composition && <p>Partie utilisée : {d.partieUtilisee}</p>}
             {d.partieUtilisee && !d.composition && <p>{d.partieUtilisee}</p>}
@@ -208,11 +189,14 @@ const jsonLd = [
       {
         d.posologie && (
           <section aria-labelledby="posologie">
-            <h2 id="posologie">
-              {d.usageExterne ? 'Utilisation' : 'Conseils d’utilisation'}
-              {d.posologieAConfirmer && <AConfirmer />}
-            </h2>
-            <p>{d.posologie}</p>
+            <h2 id="posologie">{d.usageExterne ? 'Utilisation' : 'Conseils d’utilisation'}</h2>
+            {d.posologieAConfirmer ? (
+              <p>
+                Posologie : <a href="/contact/">nous consulter</a>.
+              </p>
+            ) : (
+              <p>{d.posologie}</p>
+            )}
             {estAlcoolature && !d.usageExterne && <p>À diluer dans un verre d’eau.</p>}
           </section>
         )
@@ -343,9 +327,13 @@ const jsonLd = [
     display: grid;
     place-items: center;
     aspect-ratio: 4 / 3;
-    border: 1.5px dashed var(--ocre-texte);
     border-radius: var(--rayon);
     background: var(--vert-eau);
+  }
+
+  .fiche__sans-photo :global(img) {
+    width: 8.75rem;
+    opacity: 0.6;
   }
 
   .fiche__vignettes {
@@ -435,29 +423,11 @@ const jsonLd = [
     white-space: nowrap;
   }
 
-  .en-attente,
-  .points {
-    padding: 0.75rem 1rem;
-    border: 1.5px dashed var(--ocre-texte);
-    border-radius: 0.75rem;
-    font-size: 0.92rem;
-  }
-
-  .points {
-    margin: 1rem 0 1.5rem;
-  }
-
-  .points p {
-    margin: 0;
-  }
-
-  .points ul {
-    margin: 0.4rem 0 0;
-    padding-left: 1.2em;
-  }
-
-  .ref {
-    color: var(--encre-douce);
+  .prix-sur-demande {
+    margin: 1.25rem 0 1.5rem;
+    padding: 0.75rem 0;
+    border-block: 1px solid rgb(2 43 66 / 0.12);
+    font-weight: 700;
   }
 
   .fiche__details h2 {

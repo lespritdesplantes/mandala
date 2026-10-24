@@ -1,0 +1,270 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import FilAriane from '../components/FilAriane.astro';
+import AvertissementAlcoolature from '../components/AvertissementAlcoolature.astro';
+import { produitsDeLaGamme, urlProduit } from '../lib/produits';
+
+// Une seule source de vérité : les fiches alcoolatures (src/content/produits/alcoolatures/).
+// Pas de PDF à télécharger : la version actuelle contient des allégations non validées.
+const plantes = await produitsDeLaGamme('alcoolatures');
+
+const BIBLIOGRAPHIE = [
+  'Les alcoolatures, Christian Escriva',
+  'Plantes médicinales, Larousse',
+  'Guide des contre-indications des principales plantes médicinales, Michel Dubray',
+  'Phytothérapie, Dr Valnet',
+  'Herboristerie du Valmont',
+  'Althéa Provence, Christophe Bernard',
+  'L’Ayurvéda au quotidien, Kiran Vyas',
+  'Plantes médicinales essentielles des pharmacopées occidentales, chinoises et indiennes, Monique Simmonds, Melanie-Jayne Howes et Jason Irving',
+];
+---
+
+<BaseLayout
+  title="Usages et précautions des alcoolatures"
+  description="Alcoolatures (teintures-mères) : parties de plantes utilisées, conseils d’utilisation, précautions et contre-indications de chaque plante."
+>
+  <div class="conteneur section entete-page">
+    <FilAriane
+      elements={[
+        { label: 'Accueil', href: '/' },
+        { label: 'Usages et précautions', href: '/usages-et-precautions/' },
+      ]}
+    />
+    <h1>Usages et précautions des alcoolatures</h1>
+    <div class="chapo">
+      <p>
+        Les alcoolatures, ou teintures-mères, sont des <strong>compléments alimentaires</strong>. Ce guide est
+        donné à titre informatif : il ne se substitue pas à un avis médical.
+      </p>
+      <p>
+        Elles sont traditionnellement et principalement utilisées sous forme de cure de 3 semaines, diluées dans un
+        verre d’eau. Faites une pause d’une semaine entre deux cures consécutives. Elles ne se substituent pas à une
+        hygiène de vie et à une alimentation saines et équilibrées.
+      </p>
+    </div>
+    <AvertissementAlcoolature lienTableau={false} />
+  </div>
+
+  <section class="section section--vert" aria-labelledby="tableau-titre">
+    <div class="conteneur">
+      <h2 id="tableau-titre" class="titre-souligne">Plante par plante</h2>
+      <table class="tableau">
+        <caption class="visually-hidden">
+          Partie utilisée, présentation, conseils d’utilisation et précautions de chaque alcoolature
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Plante</th>
+            <th scope="col">Partie utilisée</th>
+            <th scope="col">Usages</th>
+            <th scope="col">Précautions et contre-indications</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            plantes.map((p) => {
+              const d = p.data;
+              return (
+                <tr class:list={[{ externe: d.usageExterne }]}>
+                  <th scope="row">
+                    <a href={urlProduit(p)}>{d.nom}</a>
+                    {d.nomLatin && <span class="latin">{d.nomLatin}</span>}
+                  </th>
+                  <td data-label="Partie utilisée">{d.partieUtilisee ?? 'Nous consulter'}</td>
+                  <td data-label="Usages">
+                    {d.usageExterne && <strong class="pastille">Usage externe uniquement</strong>}
+                    {d.resume}
+                  </td>
+                  <td data-label="Précautions et contre-indications">
+                    <p>
+                      <strong>Utilisation : </strong>
+                      {d.posologieAConfirmer || !d.posologie ? (
+                        <>
+                          <a href="/contact/">nous consulter</a>.
+                        </>
+                      ) : (
+                        d.posologie
+                      )}
+                    </p>
+                    {d.precautions.length > 0 ? (
+                      <ul>
+                        {d.precautions.map((c) => (
+                          <li>{c}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p>Précautions particulières : nous consulter.</p>
+                    )}
+                  </td>
+                </tr>
+              );
+            })
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="sources-titre">
+    <div class="conteneur sources">
+      <h2 id="sources-titre" class="titre-souligne">Sources bibliographiques</h2>
+      <ul>
+        {BIBLIOGRAPHIE.map((s) => <li>{s}</li>)}
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .entete-page {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .entete-page h1 {
+    margin: 1.25rem 0 0;
+  }
+
+  .chapo {
+    max-width: 48rem;
+  }
+
+  .tableau {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--blanc-casse);
+    border-radius: var(--rayon);
+    box-shadow: var(--ombre);
+    overflow: hidden;
+  }
+
+  .tableau th,
+  .tableau td {
+    padding: 1rem 1.1rem;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .tableau thead th {
+    background: var(--encre);
+    color: var(--blanc-casse);
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .tableau tbody tr + tr > * {
+    border-top: 1px solid rgb(2 43 66 / 0.1);
+  }
+
+  .tableau tbody th {
+    width: 14rem;
+  }
+
+  .tableau tbody th a {
+    font-family: var(--font-titre);
+    font-size: 1.7rem;
+    line-height: 1.1;
+    color: var(--encre);
+  }
+
+  .latin {
+    display: block;
+    margin-top: 0.2rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--encre-douce);
+  }
+
+  .tableau td p {
+    margin: 0 0 0.5rem;
+  }
+
+  .tableau td ul {
+    margin: 0;
+    padding-left: 1.1em;
+  }
+
+  .pastille {
+    display: inline-block;
+    margin-bottom: 0.4rem;
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    background: var(--encre);
+    color: var(--ocre);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  /* Mobile : chaque plante devient une carte */
+  @media (max-width: 47.99rem) {
+    .tableau,
+    .tableau tbody,
+    .tableau tr,
+    .tableau th,
+    .tableau td {
+      display: block;
+      width: auto;
+    }
+
+    .tableau {
+      background: none;
+      box-shadow: none;
+      border-radius: 0;
+    }
+
+    .tableau thead {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+    }
+
+    .tableau tbody tr {
+      margin-bottom: 1rem;
+      border-radius: var(--rayon);
+      background: var(--blanc-casse);
+      box-shadow: var(--ombre);
+    }
+
+    .tableau tbody tr + tr > * {
+      border-top: 0;
+    }
+
+    .tableau tbody th {
+      width: auto;
+      padding-bottom: 0.25rem;
+    }
+
+    .tableau td {
+      padding-top: 0.5rem;
+    }
+
+    .tableau td::before {
+      content: attr(data-label);
+      display: block;
+      margin-bottom: 0.2rem;
+      color: var(--ocre-texte);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+  }
+
+  .sources ul {
+    columns: 2 22rem;
+    column-gap: 2rem;
+    padding-left: 1.1em;
+  }
+
+  .sources li {
+    break-inside: avoid;
+    margin-bottom: 0.4rem;
+  }
+</style>

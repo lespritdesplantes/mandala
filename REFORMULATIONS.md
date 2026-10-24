@@ -2,6 +2,8 @@
 
 Ce fichier propose une reformulation de chaque texte des sources qui contient une allégation thérapeutique ou un terme exclu du site (« cicatrisant », « anti-inflammatoire »). **Seule la phrase de l'accueil (ACC-1) est intégrée au site**, car elle avait déjà été validée. Les autres textes ne sont pas publiés : à leur place, les pages produits affichent l'encart « Description en attente de validation » avec l'identifiant correspondant (ALC-1, HUI-2…).
 
+**En production, en attendant la validation** : chaque fiche affiche une présentation neutre (plante, partie utilisée, origine, fabrication), sans allégation. Le bloc de précautions reste affiché. Les photos dont l'étiquette porte une allégation lisible sont retirées du site.
+
 Pour valider une proposition, cocher la case ou la corriger directement dans ce fichier. Une fois la proposition validée, il suffit de reporter le texte dans le champ `usage` (ou dans le corps de la fiche) du fichier `src/content/produits/…` concerné.
 
 Principes suivis :
@@ -252,14 +254,15 @@ Le flyer indique « Covid long, paludisme ». Cette alcoolature n'est publiée n
 
 ## Photos dont les étiquettes portent des allégations lisibles
 
-Ces photos ne sont pas retouchées. Faut-il les recadrer, les refaire ou les garder ?
+Ces photos ne sont pas retouchées. Elles sont **toutes retirées du site** en attendant une décision : faut-il les recadrer, les refaire, ou les republier une fois les étiquettes changées ?
 
 | Photo | Texte lisible | Utilisation actuelle |
 |---|---|---|
 | `alcoolatures/alcoolatures-stand.jpg` | « adaptogène », « stress chronique », « système immunitaire », « angoisse »… | **retirée** du site (remplacée par la photo du tulsi) |
-| `baumes/baume-gros.jpg`, `baume-petit.jpg` | « cicatrisant » | fiche Baume à l'hélichryse, accueil, page Produits |
-| `encens/*eucalyptus*` | « Antimicrobien » | fiche Eucalyptus – Pin |
-| `encens/*helichryse*` | « Guérison » | fiche Hélichryse – Pin |
+| `baumes/baume-gros.jpg`, `baume-petit.jpg` | « cicatrisant » | **retirées** (remplacées par des photos d'hélichryse et de macérat) |
+| `encens/*eucalyptus*` (sauf `barette-qui-fume.jpg`) | « Antimicrobien » | **retirées** |
+| `encens/*helichryse*` | « Guérison » | **retirées** (remplacées par la cueillette d'hélichryse) |
+| `encens/batons-bambou-tous.jpg` | étiquettes des quatre parfums | **retirée** (photo de gamme remplacée) |
 
 ## Reste à faire
 

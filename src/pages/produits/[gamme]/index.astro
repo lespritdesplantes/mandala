@@ -6,7 +6,6 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import FilAriane from '../../../components/FilAriane.astro';
 import CarteProduit from '../../../components/CarteProduit.astro';
 import AvertissementAlcoolature from '../../../components/AvertissementAlcoolature.astro';
-import AConfirmer from '../../../components/AConfirmer.astro';
 import { gammesTriees, produitsDeLaGamme, urlGamme, urlProduit } from '../../../lib/produits';
 import { SITE } from '../../../data/site';
 
@@ -16,7 +15,7 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths;
 
 const { gamme } = Astro.props;
-const { nom, accroche, photo, photoAlt, formats, aConfirmer, reformulation } = gamme.data;
+const { nom, accroche, photo, photoAlt, formats } = gamme.data;
 const { Content } = await render(gamme);
 const produits = await produitsDeLaGamme(gamme.id);
 const estAlcoolature = gamme.id === 'alcoolatures';
@@ -59,27 +58,6 @@ const jsonLd = [
       <div class="contenu">
         <Content />
       </div>
-      {
-        reformulation && (
-          <p class="en-attente">
-            Une partie de ce texte est en attente de validation <span class="ref">(réf. {reformulation})</span>
-          </p>
-        )
-      }
-      {
-        aConfirmer.length > 0 && (
-          <div class="points">
-            <p>
-              <AConfirmer />
-            </p>
-            <ul>
-              {aConfirmer.map((point) => (
-                <li>{point}</li>
-              ))}
-            </ul>
-          </div>
-        )
-      }
     </div>
     <Image
       class="intro__photo"
@@ -181,31 +159,6 @@ const jsonLd = [
       aspect-ratio: 3 / 2;
       order: -1;
     }
-  }
-
-  .en-attente,
-  .points {
-    padding: 0.75rem 1rem;
-    border: 1.5px dashed var(--ocre-texte);
-    border-radius: 0.75rem;
-    font-size: 0.92rem;
-  }
-
-  .points {
-    margin-top: 1rem;
-  }
-
-  .points p {
-    margin: 0;
-  }
-
-  .points ul {
-    margin: 0.4rem 0 0;
-    padding-left: 1.2em;
-  }
-
-  .ref {
-    color: var(--encre-douce);
   }
 
   .avertissement-gamme {

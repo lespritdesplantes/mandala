@@ -59,6 +59,8 @@ const produits = defineCollection({
        */
       usage: z.string().optional(),
       reformulation: z.string().optional(),
+      /** Présentation courte et neutre (tableau des usages et précautions) */
+      resume: z.string().optional(),
       posologie: z.string().optional(),
       posologieAConfirmer: z.boolean().default(false),
       precautions: z.array(z.string()).default([]),

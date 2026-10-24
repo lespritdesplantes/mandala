@@ -187,3 +187,45 @@ a:hover {
 .titre-souligne--centre::after {
   margin-inline: auto;
 }
+
+/* Photo dans un cadre fixe : léger zoom et ombre au survol (et au focus clavier si c'est un lien).
+   Aucun effet si l'utilisateur a demandé à réduire les animations. */
+.cadre-zoom {
+  display: block;
+  overflow: hidden;
+  border-radius: calc(var(--rayon) * 0.75);
+  transition: box-shadow 400ms ease;
+}
+
+.cadre-zoom img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 400ms ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .cadre-zoom:hover,
+  a.cadre-zoom:focus-visible,
+  button.cadre-zoom:focus-visible {
+    box-shadow: 0 0.75rem 1.75rem rgb(2 43 66 / 0.2);
+  }
+
+  .cadre-zoom:hover img,
+  a.cadre-zoom:focus-visible img,
+  button.cadre-zoom:focus-visible img {
+    transform: scale(1.05);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cadre-zoom,
+  .cadre-zoom img {
+    transition: none;
+  }
+}
+
+/* Pas de défilement de la page derrière une boîte de dialogue modale (visionneuse) */
+html:has(dialog[open]) {
+  overflow: hidden;
+}

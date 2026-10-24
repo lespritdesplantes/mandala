@@ -15,10 +15,12 @@ reformulation: ENC-2
 aConfirmer:
   - "L'étiquette lisible sur les photos porte une allégation à retirer (voir ENC-2)."
 photos:
-  - src: ../../../assets/photos/encens/barette-berlingo-helichryse-paysage.jpg
-    alt: "Boîte berlingo d'encens Hélichryse – Pin et fagot de barrettes, avec fleurs d'hélichryse et résine de pin"
-  - src: ../../../assets/photos/encens/cones-helichryse.jpg
-    alt: "Boîte fenêtre de cônes d'encens Hélichryse – Pin devant un bouquet de fleurs séchées"
-  - src: ../../../assets/photos/encens/batons-bambou-helichryse.jpg
-    alt: "Boîte en bambou de bâtons d'encens Hélichryse – Pin"
+  - src: ../../../assets/photos/jardin-et-atelier/portrait/cueillette-helichryse.jpg
+    alt: "Panier d'osier rempli de fleurs d'hélichryse fraîchement cueillies, utilisées dans cet encens"
+# Photos retirées (étiquette portant une allégation lisible, voir REFORMULATIONS.md) :
+#   ../../../assets/photos/encens/barette-berlingo-helichryse-paysage.jpg
+#   ../../../assets/photos/encens/cones-helichryse.jpg
+#   ../../../assets/photos/encens/batons-bambou-helichryse.jpg
 ---
+
+Encens façonné à la main à partir d'hélichryse récoltée en sud Gironde, de résine de pin du Médoc et de bois de cèdre de Dordogne. Parfum épicé.

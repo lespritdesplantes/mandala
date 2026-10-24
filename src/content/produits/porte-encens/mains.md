@@ -9,4 +9,4 @@ photos:
     alt: "Porte-encens en forme de mains jointes, un bâton d'encens inséré entre les doigts"
 ---
 
-Ajustez l'insertion du bâton d'encens, profitez !
+Ajustez l'insertion du bâton d'encens, profitez !

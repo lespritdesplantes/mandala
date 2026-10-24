@@ -23,8 +23,8 @@ const euros = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR
 export const formaterPrix = (montant: number) => euros.format(montant).replace(',00', '');
 
 /** Prix le plus bas, pour les cartes (« à partir de ») */
-export function prixMinimum(produit: Produit) {
-  return Math.min(...produit.data.prix.map((p) => p.montant));
+export function prixMinimum(prix: Produit['data']['prix']) {
+  return Math.min(...prix.map((p) => p.montant));
 }
 
 /** Vrai si au moins un élément de la fiche reste à confirmer */

@@ -2,8 +2,10 @@
 // Mentions obligatoires affichées sur chaque fiche alcoolature.
 interface Props {
   usageExterne?: boolean;
+  /** Masqué sur la page du tableau elle-même */
+  lienTableau?: boolean;
 }
-const { usageExterne = false } = Astro.props;
+const { usageExterne = false, lienTableau = true } = Astro.props;
 ---
 
 <aside class="avertissement" aria-labelledby="avertissement-titre">
@@ -25,9 +27,13 @@ const { usageExterne = false } = Astro.props;
     }
     <li>Tenir hors de portée des jeunes enfants.</li>
   </ul>
-  <p>
-    <a href="/usages-et-precautions/">Consulter le tableau des usages et précautions des alcoolatures</a>
-  </p>
+  {
+    lienTableau && (
+      <p>
+        <a href="/usages-et-precautions/">Consulter le tableau des usages et précautions des alcoolatures</a>
+      </p>
+    )
+  }
 </aside>
 
 <style>
@@ -48,12 +54,12 @@ const { usageExterne = false } = Astro.props;
   }
 
   .avertissement ul {
-    margin: 0 0 0.75rem;
+    margin: 0;
     padding-left: 1.2em;
   }
 
   .avertissement p {
-    margin: 0;
+    margin: 0.75rem 0 0;
     font-weight: 700;
   }
 </style>

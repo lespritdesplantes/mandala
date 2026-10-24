@@ -1,0 +1,174 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import FilAriane from '../components/FilAriane.astro';
+import { BOUTIQUES, MARCHES, evenementsAVenir, formaterPeriode } from '../data/lieux';
+import { SITE } from '../data/site';
+
+const evenements = evenementsAVenir();
+
+const jsonLd = evenements.map((e) => ({
+  '@context': 'https://schema.org',
+  '@type': 'Event',
+  name: e.description ? `${e.nom} – ${e.description}` : e.nom,
+  startDate: e.debut,
+  endDate: e.fin,
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  eventStatus: 'https://schema.org/EventScheduled',
+  location: {
+    '@type': 'Place',
+    name: e.lieu,
+    address: { '@type': 'PostalAddress', addressLocality: e.ville, addressCountry: 'FR' },
+  },
+  organizer: { '@id': `${SITE.url}/#entreprise` },
+}));
+---
+
+<BaseLayout
+  title="Où nous trouver"
+  description="Retrouvez les produits de Mandala – L’esprit des plantes en herboristerie à Rions, Bordeaux et Pau, au Joyeux Marché de Préchac et sur les marchés et festivals de la région."
+  jsonLd={jsonLd.length > 0 ? jsonLd : undefined}
+>
+  <div class="conteneur section entete-page">
+    <FilAriane elements={[{ label: 'Accueil', href: '/' }, { label: 'Où nous trouver', href: '/ou-nous-trouver/' }]} />
+    <h1>Où nous trouver</h1>
+    <p class="chapo">
+      Les produits sont en vente dans deux herboristeries, et je vous retrouve avec plaisir sur les marchés et
+      les festivals de la région.
+    </p>
+  </div>
+
+  <section class="section section--vert" aria-labelledby="agenda-titre">
+    <div class="conteneur">
+      <h2 id="agenda-titre" class="titre-souligne">Prochains rendez-vous</h2>
+      <ul class="cartes" role="list" id="evenements">
+        {
+          evenements.map((e) => (
+            <li class="carte evenement" data-fin={e.fin}>
+              <p class="carte__surtitre">
+                <time datetime={e.debut}>{formaterPeriode(e)}</time>
+              </p>
+              <h3>{e.nom}</h3>
+              {e.description && <p class="carte__detail">{e.description}</p>}
+              <p>
+                {e.lieu}, {e.ville} ({e.departement})
+              </p>
+            </li>
+          ))
+        }
+        {
+          MARCHES.map((m) => (
+            <li class="carte">
+              <p class="carte__surtitre">Rendez-vous régulier</p>
+              <h3>{m.nom}</h3>
+              <p class="carte__detail">{m.lieu}</p>
+              <p>
+                {m.frequence}
+                {m.horaires && (
+                  <>
+                    <br />
+                    {m.horaires}
+                  </>
+                )}
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="boutiques-titre">
+    <div class="conteneur">
+      <h2 id="boutiques-titre" class="titre-souligne">En boutique</h2>
+      <ul class="cartes" role="list">
+        {
+          BOUTIQUES.map((b) => (
+            <li class="carte carte--claire">
+              <p class="carte__surtitre">{b.type}</p>
+              <h3>{b.nom}</h3>
+              <p>{b.villes}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="contact">
+        Une question sur un produit ou une disponibilité ? <a href="/contact/">Écrivez-moi</a>.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  // Entre deux builds, masque les événements dont la date de fin est passée (heure de Paris)
+  const jour = new Intl.DateTimeFormat('fr-CA', { timeZone: 'Europe/Paris' }).format(new Date());
+  document.querySelectorAll<HTMLElement>('#evenements [data-fin]').forEach((el) => {
+    if ((el.dataset.fin ?? '') < jour) el.hidden = true;
+  });
+</script>
+
+<style>
+  .entete-page {
+    padding-bottom: 2rem;
+  }
+
+  .entete-page h1 {
+    margin-top: 1.25rem;
+  }
+
+  .chapo {
+    max-width: 42rem;
+    font-size: 1.15em;
+  }
+
+  .cartes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .carte {
+    padding: 1.5rem;
+    border-radius: var(--rayon);
+    background: var(--blanc-casse);
+    box-shadow: var(--ombre);
+  }
+
+  .carte--claire {
+    background: var(--vert-eau);
+    box-shadow: none;
+  }
+
+  .carte[hidden] {
+    display: none;
+  }
+
+  .carte h3 {
+    margin-bottom: 0.25rem;
+    font-size: 2.1rem;
+  }
+
+  .carte p {
+    margin: 0;
+  }
+
+  .carte__surtitre {
+    margin-bottom: 0.4rem !important;
+    color: var(--ocre-texte);
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .carte__detail {
+    font-weight: 700;
+  }
+
+  .contact {
+    margin-top: 2rem;
+    font-weight: 600;
+  }
+</style>

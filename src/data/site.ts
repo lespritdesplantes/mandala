@@ -6,16 +6,29 @@ export const SITE = {
   description:
     'Production biologique de plantes aromatiques et médicinales, cueillette sauvage et transformation artisanale en sud Gironde : alcoolatures, baumes, huiles de massage, encens.',
   productrice: 'Cécile Anselmino',
-  telephone: '06 64 98 21 65',
-  telephoneIntl: '+33664982165',
+  formeJuridique: 'Entreprise individuelle (EI)',
+  email: 'contact@lespritdesplantes.org',
+  // Pas de numéro de téléphone publié pour l'instant
   adresse: {
+    rue: '389 rue André Jean Brana',
     commune: 'Saint-Loubert',
     codePostal: '33210',
     departement: 'Gironde',
     region: 'Nouvelle-Aquitaine',
     pays: 'FR',
   },
-  creditGraphique: 'Annabelle Caley',
+  siren: '814 695 524',
+  tva: 'FR88814695524',
+  hebergeur: {
+    nom: 'Cloudflare, Inc.',
+    // Adresse vérifiée sur cloudflare.com/website-terms/ (section Contact), octobre 2026
+    adresse: '101 Townsend St., San Francisco, CA 94107, États-Unis',
+    site: 'https://www.cloudflare.com',
+  },
+  credits: {
+    graphisme: 'Annabelle Caley',
+    site: 'Ludovic Bodin',
+  },
 } as const;
 
 export const NAVIGATION = [

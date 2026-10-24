@@ -14,12 +14,12 @@ reformulation: ENC-1
 aConfirmer:
   - "L'étiquette lisible sur les photos porte une allégation à retirer (voir ENC-1)."
 photos:
-  - src: ../../../assets/photos/encens/barette-berlingo-eucalyptus.jpg
-    alt: "Boîte berlingo d'encens Eucalyptus – Pin et fagot de barrettes, avec branches d'eucalyptus et résine de pin"
-  - src: ../../../assets/photos/encens/cones-eucalyptus.jpg
-    alt: "Boîte fenêtre de cônes d'encens Eucalyptus – Pin, deux cônes posés devant"
-  - src: ../../../assets/photos/encens/batons-bambou-eucalyptus.jpg
-    alt: "Boîte en bambou de bâtons d'encens Eucalyptus – Pin, avec des têtes de pavot séchées"
   - src: ../../../assets/photos/encens/barette-qui-fume.jpg
     alt: "Barrette d'encens Eucalyptus – Pin qui se consume au-dessus d'une coupelle"
+# Photos retirées (étiquette portant une allégation lisible, voir REFORMULATIONS.md) :
+#   ../../../assets/photos/encens/barette-berlingo-eucalyptus.jpg
+#   ../../../assets/photos/encens/cones-eucalyptus.jpg
+#   ../../../assets/photos/encens/batons-bambou-eucalyptus.jpg
 ---
+
+Encens façonné à la main à partir d'eucalyptus et de résine de pin maritime cueillis dans le Médoc, et de bois de cèdre de Dordogne. Parfum frais.
