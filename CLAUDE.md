@@ -22,7 +22,8 @@ Site vitrine de la ferme de Cécile Anselmino (Saint-Loubert, 33) : production b
 - Blanc cassé, environ `#FBFAF6`, pour le fond principal.
 - Titres dans une police manuscrite proche du logo (Google Fonts, par exemple « Caveat » ou « Kalam »), texte courant en sans-serif lisible (par exemple « Nunito »). Les polices sont auto-hébergées.
 - L'ambiance est naturelle, artisanale et lumineuse. On évite le style « template corporate ».
-- Les couleurs exactes sont à prélever dans le logo : `public/logo.jpg`.
+- Les couleurs exactes sont prélevées dans le logo (`sources/logo-mandala.png`) : encre `#022B42`, ocre `#E3B43B`, vert d'eau `#E4EEE6`, blanc cassé `#FBFAF6` ; ocre foncé `#7C520A` pour les liens sur fond clair (l'ocre pur n'a pas le contraste AA en texte). Tokens dans `src/styles/global.css`.
+- Photos : `npm run photos` (script `scripts/preparer-photos.mjs`) convertit `sources/photos/` vers `src/assets/photos/` (slug ASCII, 2400 px max, EXIF nettoyé).
 
 ## Arborescence
 

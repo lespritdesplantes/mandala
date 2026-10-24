@@ -1,0 +1,518 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PictureDirection from '../components/PictureDirection.astro';
+import { SITE } from '../data/site';
+
+import heroPaysage from '../assets/photos/jardin-et-atelier/paysage/jardin.jpg';
+import heroPortrait from '../assets/photos/jardin-et-atelier/portrait/cueillette-camomille.jpg';
+import cecilePanier from '../assets/photos/jardin-et-atelier/paysage/moi-ac-panier.jpg';
+import cueilletteHelichryse from '../assets/photos/jardin-et-atelier/portrait/cueillette-helichryse.jpg';
+import sechoirRoses from '../assets/photos/jardin-et-atelier/paysage/sechoir.jpg';
+import abeillePavot from '../assets/photos/jardin-et-atelier/portrait/abeille-pavot.jpg';
+import potMacerat from '../assets/photos/jardin-et-atelier/portrait/pot-macerat.jpg';
+import atelier from '../assets/photos/jardin-et-atelier/portrait/moi-atelier.jpg';
+
+import vAlcoolatures from '../assets/photos/alcoolatures/tulsi.jpg';
+import vBaumes from '../assets/photos/baumes/baume-gros.jpg';
+import vHuiles from '../assets/photos/huiles-de-massage/huiles-toutesss.jpg';
+import vEncens from '../assets/photos/encens/batons-bambou-tous.jpg';
+import vFumigation from '../assets/photos/batons-de-fumigation/fumi-oui.jpg';
+import vPorteEncens from '../assets/photos/porte-encens/fleur-qui-fume.jpg';
+
+const valeurs = [
+  {
+    titre: 'Biologique',
+    texte:
+      'J’utilise les ressources naturelles avec sobriété : pour fertiliser, arroser, protéger les cultures. Je pratique une agriculture favorisante : je favorise un milieu, pour permettre à l’Intelligence Naturelle de développer le Vivant.',
+  },
+  {
+    titre: 'Éthique',
+    texte:
+      'L’esprit des plantes est écologique, coopératif, ancré sur un territoire. Les matières premières sont biologiques et locales (huile de chanvre), ou équitables (huile de coco, résines).',
+  },
+  {
+    titre: 'Artisanal',
+    texte:
+      'La fabrication est consciencieuse : tout est artisanal. Le résultat se retrouve concentré dans les flacons : les propriétés aromatiques et médicinales des plantes traitées avec amour offrent une qualité optimale des produits.',
+  },
+];
+
+const mosaique = [
+  { src: cueilletteHelichryse, alt: 'Panier en osier rempli de fleurs jaunes d’hélichryse fraîchement cueillies' },
+  { src: abeillePavot, alt: 'Abeille butinant le cœur d’une fleur de pavot rose' },
+  { src: sechoirRoses, alt: 'Claies de séchage chargées de pétales et de boutons de roses' },
+  { src: potMacerat, alt: 'Grand bocal de fleurs en macération dans l’huile, à la lumière' },
+  { src: atelier, alt: 'Cécile au travail dans l’atelier, entourée d’étagères de bocaux' },
+];
+
+const gammes = [
+  { slug: 'alcoolatures', nom: 'Alcoolatures', image: vAlcoolatures, alt: 'Flacon d’alcoolature de tulsi tenu devant le plant' },
+  { slug: 'baumes', nom: 'Baumes', image: vBaumes, alt: 'Pot de baume à l’hélichryse posé devant des tiges d’hélichryse' },
+  { slug: 'huiles-de-massage', nom: 'Huiles de massage', image: vHuiles, alt: 'Les trois huiles de massage alignées sur une toison' },
+  { slug: 'encens', nom: 'Encens', image: vEncens, alt: 'Boîtes en bambou d’encens artisanal aux étiquettes colorées' },
+  { slug: 'batons-de-fumigation', nom: 'Bâtons de fumigation', image: vFumigation, alt: 'Bâtons de fumigation de plantes séchées liés au fil' },
+  { slug: 'porte-encens', nom: 'Porte-encens', image: vPorteEncens, alt: 'Porte-encens en forme de fleur avec un encens qui se consume' },
+];
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  '@id': `${SITE.url}/#entreprise`,
+  name: SITE.nom,
+  description: SITE.description,
+  url: SITE.url,
+  logo: `${SITE.url}/logo.png`,
+  image: `${SITE.url}/logo.png`,
+  telephone: SITE.telephoneIntl,
+  founder: { '@type': 'Person', name: SITE.productrice },
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: SITE.adresse.commune,
+    postalCode: SITE.adresse.codePostal,
+    addressRegion: SITE.adresse.region,
+    addressCountry: SITE.adresse.pays,
+  },
+};
+---
+
+<BaseLayout
+  title="Accueil"
+  description="Mandala – L’esprit des plantes : plantes aromatiques et médicinales cultivées en bio en sud Gironde, cueillette sauvage et produits artisanaux faits main par Cécile Anselmino."
+  image={heroPaysage}
+  jsonLd={jsonLd}
+>
+  <section class="hero" aria-labelledby="hero-titre">
+    <PictureDirection
+      class="hero__image"
+      paysage={heroPaysage}
+      portrait={heroPortrait}
+      alt=""
+      prioritaire
+    />
+    <div class="hero__voile" aria-hidden="true"></div>
+    <div class="conteneur hero__contenu">
+      <p class="hero__valeurs">Biologique · Éthique · Artisanal</p>
+      <h1 id="hero-titre">L’esprit des plantes</h1>
+      <p class="hero__devise">« Prendre soin de la Nature, prendre soin de l’humain »</p>
+      <div class="hero__actions">
+        <a class="bouton" href="/produits/">Découvrir les produits</a>
+        <a class="bouton bouton--contour" href="/ou-nous-trouver/">Où nous trouver</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="intro-titre">
+    <div class="conteneur intro">
+      <div class="intro__texte">
+        <h2 id="intro-titre" class="titre-souligne">Du jardin au flacon</h2>
+        <p class="intro__chapo">
+          Production biologique de plantes aromatiques et médicinales, cueillette sauvage et transformation en
+          produits de soins naturels, fabrication artisanale.
+        </p>
+        <p>
+          Produits faits main par une humaine, avec soin, conscience et attention : valorisant ainsi ce que la
+          nature nous offre pour accompagner le bien-être physique, émotionnel, énergétique et mental.
+        </p>
+        <p>
+          C’est en sud Gironde que je cultive les PPAM (plantes à parfum, aromatiques et médicinales), et pratique
+          la cueillette principalement en Aquitaine, suivant les principes d’une agriculture qui prend soin du sol
+          et qui favorise la biodiversité.
+        </p>
+        <p class="intro__signature">{SITE.productrice}</p>
+      </div>
+      <figure class="intro__photo">
+        <Image
+          src={cecilePanier}
+          alt="Cécile Anselmino au jardin, tenant un panier d’osier rempli de plantes fraîchement cueillies"
+          widths={[480, 720, 960, 1200]}
+          sizes="(min-width: 60rem) 34rem, 100vw"
+        />
+      </figure>
+    </div>
+  </section>
+
+  <section class="section section--vert" aria-labelledby="valeurs-titre">
+    <div class="conteneur">
+      <h2 id="valeurs-titre" class="titre-souligne titre-souligne--centre valeurs__titre">Mes engagements</h2>
+      <ul class="valeurs" role="list">
+        {
+          valeurs.map(({ titre, texte }, i) => (
+            <li class="valeur">
+              <span class="valeur__numero" aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <h3>{titre}</h3>
+              <p>{texte}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="jardin-titre">
+    <div class="conteneur">
+      <div class="entete-section">
+        <h2 id="jardin-titre" class="titre-souligne">Au fil des saisons</h2>
+        <a href="/jardin-et-atelier/">Voir le jardin et l’atelier →</a>
+      </div>
+      <ul class="mosaique" role="list">
+        {
+          mosaique.map(({ src, alt }) => (
+            <li>
+              <Image src={src} alt={alt} widths={[400, 640, 960]} sizes="(min-width: 48rem) 33vw, 50vw" />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--vert" aria-labelledby="gammes-titre">
+    <div class="conteneur">
+      <div class="entete-section">
+        <h2 id="gammes-titre" class="titre-souligne">Les gammes</h2>
+        <a href="/produits/">Tous les produits →</a>
+      </div>
+      <ul class="gammes" role="list">
+        {
+          gammes.map(({ slug, nom, image, alt }) => (
+            <li>
+              <a class="gamme" href={`/produits/${slug}/`}>
+                <Image src={image} alt={alt} widths={[320, 480, 720]} sizes="(min-width: 72rem) 23rem, (min-width: 52rem) 33vw, 50vw" />
+                <span class="gamme__nom">{nom}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section conclusion" aria-label="La démarche">
+    <div class="conteneur conclusion__contenu">
+      <blockquote>
+        <p>
+          Acheter mes produits, c’est avant tout encourager une démarche où la santé de l’Homme et de son
+          environnement sont une même chose : prendre soin de notre véhicule corps, et de notre vaisseau Terre,
+          parce qu’il n’y en aura pas d’autres.
+        </p>
+      </blockquote>
+      <a class="bouton" href="/ou-nous-trouver/">Me retrouver sur les marchés</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* Héro */
+  .hero {
+    position: relative;
+    display: grid;
+    min-height: min(88vh, 52rem);
+    color: var(--blanc-casse);
+    isolation: isolate;
+  }
+
+  .hero :global(.hero__image) {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+
+  .hero :global(.hero__image img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 60%;
+  }
+
+  .hero__voile {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(to top, rgb(2 43 66 / 0.9) 0%, rgb(2 43 66 / 0.7) 40%, rgb(2 43 66 / 0.25) 70%, rgb(2 43 66 / 0.05) 90%),
+      linear-gradient(to right, rgb(2 43 66 / 0.35), transparent 60%);
+  }
+
+  .hero__contenu {
+    align-self: end;
+    padding-block: 4rem clamp(3rem, 8vh, 5rem);
+  }
+
+  .hero h1 {
+    margin-bottom: 0.15em;
+    font-size: clamp(3.5rem, 2rem + 7vw, 7rem);
+    text-shadow: 0 2px 18px rgb(2 43 66 / 0.45);
+  }
+
+  .hero__valeurs {
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ocre);
+  }
+
+  .hero__devise {
+    max-width: 30ch;
+    font-family: var(--font-titre);
+    font-size: clamp(1.6rem, 1.2rem + 1.5vw, 2.4rem);
+    line-height: 1.2;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+  }
+
+  .hero .bouton--contour {
+    color: var(--blanc-casse);
+  }
+
+  /* Introduction */
+  .intro {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+  }
+
+  @media (min-width: 60rem) {
+    .intro {
+      grid-template-columns: 1fr 34rem;
+    }
+  }
+
+  .intro__texte {
+    max-width: 38rem;
+  }
+
+  .intro__chapo {
+    font-size: 1.2em;
+    font-weight: 600;
+  }
+
+  .intro__signature {
+    font-family: var(--font-titre);
+    font-size: 1.9rem;
+    color: var(--ocre-texte);
+  }
+
+  .intro__photo {
+    margin: 0;
+  }
+
+  .intro__photo :global(img) {
+    width: 100%;
+    border-radius: var(--rayon);
+    box-shadow: var(--ombre);
+    transform: rotate(1deg);
+  }
+
+  /* Valeurs */
+  .valeurs__titre {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .valeurs {
+    display: grid;
+    gap: 1.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 52rem) {
+    .valeurs {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .valeur {
+    padding: 2rem 1.75rem 1.5rem;
+    background: var(--blanc-casse);
+    border-radius: var(--rayon);
+    box-shadow: var(--ombre);
+  }
+
+  .valeur__numero {
+    display: inline-grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-bottom: 0.75rem;
+    border-radius: 50%;
+    background: var(--ocre);
+    font-weight: 800;
+    font-size: 0.9rem;
+  }
+
+  .valeur h3 {
+    font-size: 2.2rem;
+  }
+
+  .valeur p {
+    margin: 0;
+  }
+
+  /* En-tête de section avec lien */
+  .entete-section {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 0.5rem 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .entete-section h2 {
+    margin: 0;
+  }
+
+  .entete-section a {
+    font-weight: 700;
+  }
+
+  /* Mosaïque photos */
+  .mosaique {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 11rem;
+    gap: 0.75rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .mosaique li:first-child {
+    grid-row: span 2;
+  }
+
+  .mosaique li:nth-child(3) {
+    grid-column: span 2;
+  }
+
+  @media (min-width: 48rem) {
+    .mosaique {
+      grid-template-columns: repeat(4, 1fr);
+      grid-auto-rows: 14rem;
+      gap: 1rem;
+    }
+
+    .mosaique li:nth-child(3) {
+      grid-column: span 2;
+    }
+
+    .mosaique li:nth-child(5) {
+      grid-column: span 2;
+    }
+  }
+
+  .mosaique :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: calc(var(--rayon) * 0.75);
+  }
+
+  /* Gammes */
+  .gammes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 52rem) {
+    .gammes {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+  }
+
+  .gamme {
+    display: block;
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--rayon);
+    color: var(--blanc-casse);
+    text-decoration: none;
+    aspect-ratio: 4 / 5;
+    box-shadow: var(--ombre);
+  }
+
+  .gamme :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .gamme::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgb(2 43 66 / 0.85), transparent 55%);
+  }
+
+  .gamme__nom {
+    position: absolute;
+    left: 1.25rem;
+    right: 1.25rem;
+    bottom: 1rem;
+    z-index: 1;
+    font-family: var(--font-titre);
+    font-size: clamp(1.6rem, 1.2rem + 1.5vw, 2.3rem);
+    line-height: 1.1;
+  }
+
+  .gamme:hover {
+    color: var(--blanc-casse);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .gamme:hover :global(img) {
+      transform: scale(1.05);
+    }
+  }
+
+  /* Conclusion */
+  .conclusion {
+    background: var(--encre);
+    color: var(--blanc-casse);
+    text-align: center;
+  }
+
+  .conclusion__contenu {
+    max-width: 50rem;
+  }
+
+  .conclusion blockquote {
+    margin: 0 0 2rem;
+  }
+
+  .conclusion blockquote p {
+    font-family: var(--font-titre);
+    font-size: clamp(1.7rem, 1.3rem + 1.5vw, 2.5rem);
+    line-height: 1.25;
+  }
+
+  .conclusion blockquote p::before {
+    content: '';
+    display: block;
+    width: 3rem;
+    height: 3rem;
+    margin: 0 auto 1rem;
+    background: var(--ocre);
+    mask: radial-gradient(circle, #000 30%, transparent 32%) center / 100% 100%,
+      repeating-conic-gradient(#000 0 9deg, transparent 9deg 45deg) center / 100% 100%;
+    mask-composite: add;
+  }
+</style>

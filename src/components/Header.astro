@@ -1,0 +1,237 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo.png';
+import { NAVIGATION } from '../data/site';
+
+const chemin = Astro.url.pathname;
+const estActif = (href: string) => (href === '/' ? chemin === '/' : chemin.startsWith(href));
+---
+
+<header class="entete">
+  <div class="conteneur entete__barre">
+    <a href="/" class="entete__logo" aria-label="Mandala – L’esprit des plantes, accueil">
+      <Image src={logo} alt="" width={63} densities={[1, 2]} loading="eager" />
+    </a>
+
+    <button
+      class="entete__burger"
+      type="button"
+      aria-expanded="false"
+      aria-controls="menu-principal"
+    >
+      <span class="burger" aria-hidden="true"><span></span></span>
+      <span class="entete__burger-texte">Menu</span>
+    </button>
+
+    <nav id="menu-principal" class="menu" aria-label="Navigation principale">
+      <ul>
+        {
+          NAVIGATION.map(({ href, label }) => (
+            <li>
+              <a href={href} aria-current={estActif(href) ? 'page' : undefined}>
+                {label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const bouton = document.querySelector<HTMLButtonElement>('.entete__burger');
+  const menu = document.getElementById('menu-principal');
+
+  if (bouton && menu) {
+    const fermer = () => {
+      bouton.setAttribute('aria-expanded', 'false');
+      menu.classList.remove('menu--ouvert');
+    };
+
+    bouton.addEventListener('click', () => {
+      const ouvert = bouton.getAttribute('aria-expanded') === 'true';
+      bouton.setAttribute('aria-expanded', String(!ouvert));
+      menu.classList.toggle('menu--ouvert', !ouvert);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && bouton.getAttribute('aria-expanded') === 'true') {
+        fermer();
+        bouton.focus();
+      }
+    });
+
+    matchMedia('(min-width: 60rem)').addEventListener('change', fermer);
+  }
+</script>
+
+<style>
+  .entete {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgb(251 250 246 / 0.94);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgb(2 43 66 / 0.08);
+  }
+
+  .entete__barre {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 4.5rem;
+  }
+
+  .entete__logo {
+    display: block;
+    padding-block: 0.4rem;
+  }
+
+  .entete__logo img {
+    width: auto;
+    height: 3.5rem;
+  }
+
+  /* Bouton du menu mobile */
+  .entete__burger {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 2.75rem;
+    padding: 0.5rem 0.9rem;
+    border: 2px solid var(--encre);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--encre);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .burger,
+  .burger span,
+  .burger span::before,
+  .burger span::after {
+    display: block;
+    width: 1.25rem;
+    height: 2px;
+    background: currentColor;
+    border-radius: 2px;
+    transition: transform 0.25s, opacity 0.25s;
+  }
+
+  .burger {
+    position: relative;
+    background: none;
+  }
+
+  .burger span {
+    position: absolute;
+    top: 0;
+  }
+
+  .burger span::before,
+  .burger span::after {
+    content: '';
+    position: absolute;
+  }
+
+  .burger span::before {
+    top: -6px;
+  }
+
+  .burger span::after {
+    top: 6px;
+  }
+
+  [aria-expanded='true'] .burger span {
+    background: transparent;
+  }
+
+  [aria-expanded='true'] .burger span::before {
+    transform: translateY(6px) rotate(45deg);
+  }
+
+  [aria-expanded='true'] .burger span::after {
+    transform: translateY(-6px) rotate(-45deg);
+  }
+
+  .menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .menu a {
+    display: block;
+    color: var(--encre);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .menu a[aria-current='page'] {
+    text-decoration: underline;
+    text-decoration-color: var(--ocre);
+    text-decoration-thickness: 3px;
+    text-underline-offset: 0.4em;
+  }
+
+  /* Mobile : panneau déroulant sous l'en-tête */
+  @media (max-width: 59.99rem) {
+    .menu {
+      display: none;
+      position: absolute;
+      inset: 100% 0 auto;
+      background: var(--blanc-casse);
+      border-bottom: 1px solid rgb(2 43 66 / 0.1);
+      box-shadow: var(--ombre);
+      max-height: calc(100vh - 4.5rem);
+      overflow-y: auto;
+    }
+
+    .menu--ouvert {
+      display: block;
+    }
+
+    .menu ul {
+      padding: 0.5rem var(--gouttiere) 1.25rem;
+    }
+
+    .menu li + li {
+      border-top: 1px solid rgb(2 43 66 / 0.08);
+    }
+
+    .menu a {
+      padding: 0.9rem 0;
+      font-size: 1.1rem;
+    }
+
+    .menu a:hover {
+      color: var(--ocre-texte);
+    }
+  }
+
+  /* Ordinateur : menu horizontal */
+  @media (min-width: 60rem) {
+    .entete__burger {
+      display: none;
+    }
+
+    .menu ul {
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .menu a {
+      padding: 0.5rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.98rem;
+    }
+
+    .menu a:hover {
+      background: var(--vert-eau);
+    }
+  }
+</style>

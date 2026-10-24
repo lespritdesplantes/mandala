@@ -1,0 +1,65 @@
+---
+// <picture> à direction artistique : une photo paysage sur grand écran,
+// une photo portrait sur mobile, chacune en AVIF, WebP et JPEG avec srcset.
+// (Le composant <Picture> d'Astro ne gère qu'une seule image source.)
+import type { ImageMetadata } from 'astro';
+import { getImage } from 'astro:assets';
+
+interface Props {
+  paysage: ImageMetadata;
+  portrait: ImageMetadata;
+  alt: string;
+  /** Point de bascule entre portrait et paysage */
+  media?: string;
+  /** true pour l'image principale (LCP) : chargement immédiat et prioritaire */
+  prioritaire?: boolean;
+  class?: string;
+}
+
+const {
+  paysage,
+  portrait,
+  alt,
+  media = '(min-width: 48rem)',
+  prioritaire = false,
+  class: classe,
+} = Astro.props;
+
+const LARGEURS_PAYSAGE = [960, 1440, 1920, 2400];
+const LARGEURS_PORTRAIT = [480, 720, 960, 1200];
+const FORMATS = ['avif', 'webp'] as const;
+// Image plein écran : une qualité modérée suffit et allège nettement le LCP.
+// Les échelles de qualité diffèrent selon le format (AVIF 50 ≈ WebP/JPEG 70).
+const QUALITE: Record<string, number> = { avif: 50, webp: 68, jpg: 70 };
+
+async function srcset(src: ImageMetadata, largeurs: number[], format: string) {
+  const utiles = largeurs.filter((l) => l <= src.width);
+  if (utiles.length === 0) utiles.push(src.width);
+  const images = await Promise.all(utiles.map((width) => getImage({ src, width, format, quality: QUALITE[format] })));
+  return images.map((img, i) => `${img.src} ${utiles[i]}w`).join(', ');
+}
+
+const sources = [];
+for (const format of FORMATS) {
+  sources.push({ media, type: `image/${format}`, srcset: await srcset(paysage, LARGEURS_PAYSAGE, format) });
+  sources.push({ type: `image/${format}`, srcset: await srcset(portrait, LARGEURS_PORTRAIT, format) });
+}
+sources.push({ media, type: 'image/jpeg', srcset: await srcset(paysage, LARGEURS_PAYSAGE, 'jpg') });
+
+const repli = await getImage({ src: portrait, width: 960, format: 'jpg', quality: QUALITE.jpg });
+---
+
+<picture class={classe}>
+  {sources.map((s) => <source media={s.media} type={s.type} srcset={s.srcset} sizes="100vw" />)}
+  <img
+    src={repli.src}
+    srcset={await srcset(portrait, LARGEURS_PORTRAIT, 'jpg')}
+    sizes="100vw"
+    alt={alt}
+    width={portrait.width}
+    height={portrait.height}
+    loading={prioritaire ? 'eager' : 'lazy'}
+    fetchpriority={prioritaire ? 'high' : 'auto'}
+    decoding={prioritaire ? 'sync' : 'async'}
+  />
+</picture>

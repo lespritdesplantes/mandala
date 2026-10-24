@@ -1,0 +1,131 @@
+---
+import { GAMMES, NAVIGATION, SITE } from '../data/site';
+
+const annee = new Date().getFullYear();
+---
+
+<footer class="pied">
+  <div class="conteneur pied__grille">
+    <div class="pied__marque">
+      <p class="pied__nom">Mandala</p>
+      <p class="pied__devise">L’esprit des plantes</p>
+      <p>
+        {SITE.productrice}<br />
+        {SITE.adresse.commune} ({SITE.adresse.codePostal.slice(0, 2)})<br />
+        <a href={`tel:${SITE.telephoneIntl}`}>{SITE.telephone}</a>
+      </p>
+    </div>
+
+    <nav aria-labelledby="pied-produits">
+      <h2 id="pied-produits" class="pied__titre">Produits</h2>
+      <ul>
+        {
+          GAMMES.map(({ slug, nom }) => (
+            <li>
+              <a href={`/produits/${slug}/`}>{nom}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <nav aria-labelledby="pied-site">
+      <h2 id="pied-site" class="pied__titre">Le site</h2>
+      <ul>
+        {
+          NAVIGATION.filter(({ href }) => href !== '/' && href !== '/produits/').map(({ href, label }) => (
+            <li>
+              <a href={href}>{label}</a>
+            </li>
+          ))
+        }
+        <li><a href="/mentions-legales/">Mentions légales</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="conteneur pied__bas">
+    <p>Biologique · Éthique · Artisanal</p>
+    <p>© {annee} {SITE.nom} · Création graphique : {SITE.creditGraphique}</p>
+  </div>
+</footer>
+
+<style>
+  .pied {
+    margin-top: auto;
+    background: var(--encre);
+    color: #dfe7ec;
+    padding-top: clamp(3rem, 2rem + 4vw, 4.5rem);
+  }
+
+  .pied a {
+    color: #dfe7ec;
+    text-decoration-color: rgb(227 180 59 / 0.6);
+  }
+
+  .pied a:hover {
+    color: var(--ocre);
+  }
+
+  .pied__grille {
+    display: grid;
+    gap: 2.5rem;
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 40rem) {
+    .pied__grille {
+      grid-template-columns: 1.4fr 1fr 1fr;
+    }
+  }
+
+  .pied__nom {
+    margin: 0;
+    font-family: var(--font-titre);
+    font-size: 3rem;
+    line-height: 1;
+    color: var(--blanc-casse);
+  }
+
+  .pied__devise {
+    margin: 0 0 1.25rem;
+    font-family: var(--font-titre);
+    font-size: 1.6rem;
+    color: var(--ocre);
+  }
+
+  .pied__titre {
+    font-family: var(--font-texte);
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ocre);
+    margin-bottom: 1rem;
+  }
+
+  .pied ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .pied li {
+    padding-block: 0.3rem;
+  }
+
+  .pied__bas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 2rem;
+    margin-top: 3rem;
+    padding-block: 1.5rem;
+    border-top: 1px solid rgb(255 255 255 / 0.12);
+    font-size: 0.9rem;
+  }
+
+  .pied__bas p {
+    margin: 0;
+  }
+</style>

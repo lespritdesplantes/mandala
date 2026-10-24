@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://lespritdesplantes.org/sitemap-index.xml

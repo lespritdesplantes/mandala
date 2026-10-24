@@ -1,1 +1,21 @@
-sources/videos/
+# Dépendances et build
+node_modules/
+dist/
+.astro/
+
+# Originaux lourds : seules les versions redimensionnées (src/assets/photos/) sont versionnées
+sources/photos/
+# Tout dossier de vidéos, avec ou sans accent, à n'importe quel niveau
+**/vidéos/
+**/videos/
+*.mp4
+*.mov
+
+# Système
+desktop.ini
+Thumbs.db
+.DS_Store
+
+# Environnement
+.env
+.env.*
