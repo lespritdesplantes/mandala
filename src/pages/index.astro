@@ -13,12 +13,7 @@ import abeillePavot from '../assets/photos/jardin-et-atelier/portrait/abeille-pa
 import potMacerat from '../assets/photos/jardin-et-atelier/portrait/pot-macerat.jpg';
 import atelier from '../assets/photos/jardin-et-atelier/portrait/moi-atelier.jpg';
 
-import vAlcoolatures from '../assets/photos/alcoolatures/tulsi.jpg';
-import vBaumes from '../assets/photos/baumes/baume-gros.jpg';
-import vHuiles from '../assets/photos/huiles-de-massage/huiles-toutesss.jpg';
-import vEncens from '../assets/photos/encens/batons-bambou-tous.jpg';
-import vFumigation from '../assets/photos/batons-de-fumigation/fumi-oui.jpg';
-import vPorteEncens from '../assets/photos/porte-encens/fleur-qui-fume.jpg';
+import { gammesTriees, urlGamme } from '../lib/produits';
 
 const valeurs = [
   {
@@ -46,14 +41,7 @@ const mosaique = [
   { src: atelier, alt: 'Cécile au travail dans l’atelier, entourée d’étagères de bocaux' },
 ];
 
-const gammes = [
-  { slug: 'alcoolatures', nom: 'Alcoolatures', image: vAlcoolatures, alt: 'Flacon d’alcoolature de tulsi tenu devant le plant' },
-  { slug: 'baumes', nom: 'Baumes', image: vBaumes, alt: 'Pot de baume à l’hélichryse posé devant des tiges d’hélichryse' },
-  { slug: 'huiles-de-massage', nom: 'Huiles de massage', image: vHuiles, alt: 'Les trois huiles de massage alignées sur une toison' },
-  { slug: 'encens', nom: 'Encens', image: vEncens, alt: 'Boîtes en bambou d’encens artisanal aux étiquettes colorées' },
-  { slug: 'batons-de-fumigation', nom: 'Bâtons de fumigation', image: vFumigation, alt: 'Bâtons de fumigation de plantes séchées liés au fil' },
-  { slug: 'porte-encens', nom: 'Porte-encens', image: vPorteEncens, alt: 'Porte-encens en forme de fleur avec un encens qui se consume' },
-];
+const gammes = await gammesTriees();
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -177,10 +165,10 @@ const jsonLd = {
       </div>
       <ul class="gammes" role="list">
         {
-          gammes.map(({ slug, nom, image, alt }) => (
+          gammes.map(({ id, data: { nom, photo, photoAlt } }) => (
             <li>
-              <a class="gamme" href={`/produits/${slug}/`}>
-                <Image src={image} alt={alt} widths={[320, 480, 720]} sizes="(min-width: 72rem) 23rem, (min-width: 52rem) 33vw, 50vw" />
+              <a class="gamme" href={urlGamme(id)}>
+                <Image src={photo} alt={photoAlt} widths={[320, 480, 720]} sizes="(min-width: 72rem) 23rem, (min-width: 52rem) 33vw, 50vw" />
                 <span class="gamme__nom">{nom}</span>
               </a>
             </li>

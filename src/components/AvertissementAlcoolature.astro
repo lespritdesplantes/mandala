@@ -1,0 +1,59 @@
+---
+// Mentions obligatoires affichées sur chaque fiche alcoolature.
+interface Props {
+  usageExterne?: boolean;
+}
+const { usageExterne = false } = Astro.props;
+---
+
+<aside class="avertissement" aria-labelledby="avertissement-titre">
+  <h2 id="avertissement-titre" class="avertissement__titre">Précautions d’emploi</h2>
+  <ul>
+    <li><strong>Contient de l’alcool.</strong></li>
+    <li>Déconseillé aux femmes enceintes ou allaitantes et aux enfants.</li>
+    <li>En cas de traitement médical, demandez l’avis de votre médecin.</li>
+    {
+      !usageExterne && (
+        <>
+          <li>Ne pas dépasser la dose journalière recommandée.</li>
+          <li>
+            Complément alimentaire : ne se substitue pas à une alimentation variée et équilibrée et à un mode de vie
+            sain.
+          </li>
+        </>
+      )
+    }
+    <li>Tenir hors de portée des jeunes enfants.</li>
+  </ul>
+  <p>
+    <a href="/usages-et-precautions/">Consulter le tableau des usages et précautions des alcoolatures</a>
+  </p>
+</aside>
+
+<style>
+  .avertissement {
+    padding: 1.25rem 1.5rem;
+    border-left: 5px solid var(--ocre);
+    border-radius: 0 var(--rayon) var(--rayon) 0;
+    background: var(--vert-eau);
+  }
+
+  .avertissement__titre {
+    margin-bottom: 0.5rem;
+    font-family: var(--font-texte);
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .avertissement ul {
+    margin: 0 0 0.75rem;
+    padding-left: 1.2em;
+  }
+
+  .avertissement p {
+    margin: 0;
+    font-weight: 700;
+  }
+</style>

@@ -1,0 +1,29 @@
+---
+// Badge signalant une valeur provisoire, en attente de confirmation.
+interface Props {
+  /** Précision affichée au survol et lue par les lecteurs d'écran */
+  note?: string;
+}
+const { note } = Astro.props;
+---
+
+<span class="a-confirmer" title={note}>
+  À CONFIRMER{note && <span class="visually-hidden"> : {note}</span>}
+</span>
+
+<style>
+  .a-confirmer {
+    display: inline-block;
+    margin-left: 0.4em;
+    padding: 0.05em 0.5em;
+    border: 1.5px dashed var(--ocre-texte);
+    border-radius: 0.35rem;
+    color: var(--ocre-texte);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    line-height: 1.6;
+    vertical-align: 0.15em;
+    white-space: nowrap;
+  }
+</style>

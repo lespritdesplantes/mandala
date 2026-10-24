@@ -1,0 +1,20 @@
+---
+nom: Tulsi
+nomLatin: Ocimum sanctum
+gamme: alcoolatures
+ordre: 5
+accroche: Basilic sacré
+prix:
+  - { libelle: "Flacon de 50 mL", montant: 20 }
+partieUtilisee: Feuille
+reformulation: ALC-5
+posologie: "30 à 60 gouttes par jour, en cure de 3 semaines."
+precautions:
+  - "Plante hypoglycémiante : elle peut interférer avec le traitement des personnes atteintes de diabète insulinodépendant. Demandez un avis médical."
+  - "Attention en cas d'allergie aux Lamiacées."
+photos:
+  - src: ../../../assets/photos/alcoolatures/tulsi.jpg
+    alt: "Flacon d'alcoolature de tulsi tenu devant le plant de basilic sacré en fleurs"
+---
+
+Traditionnellement utilisé dans la pharmacopée ayurvédique, on l'appelle aussi « basilic sacré ».

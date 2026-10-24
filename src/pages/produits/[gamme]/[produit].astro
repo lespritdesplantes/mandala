@@ -1,0 +1,509 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { Image, getImage } from 'astro:assets';
+import { getCollection, getEntry, render } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import FilAriane from '../../../components/FilAriane.astro';
+import CarteProduit from '../../../components/CarteProduit.astro';
+import AvertissementAlcoolature from '../../../components/AvertissementAlcoolature.astro';
+import AConfirmer from '../../../components/AConfirmer.astro';
+import {
+  formaterPrix,
+  produitsDeLaGamme,
+  slugProduit,
+  urlGamme,
+  urlProduit,
+} from '../../../lib/produits';
+import { SITE } from '../../../data/site';
+
+export const getStaticPaths = (async () => {
+  const produits = await getCollection('produits');
+  return produits.map((produit) => ({
+    params: { gamme: produit.data.gamme, produit: slugProduit(produit) },
+    props: { produit },
+  }));
+}) satisfies GetStaticPaths;
+
+const { produit } = Astro.props;
+const d = produit.data;
+const gamme = (await getEntry('gammes', d.gamme))!;
+const { Content } = await render(produit);
+const estAlcoolature = d.gamme === 'alcoolatures';
+const autres = (await produitsDeLaGamme(d.gamme)).filter((p) => p.id !== produit.id);
+const [photoPrincipale, ...autresPhotos] = d.photos;
+const formats = gamme.data.formats;
+
+const description = `${d.nom}${d.nomLatin ? ` (${d.nomLatin})` : ''} – ${gamme.data.nom}. ${gamme.data.accroche}`;
+
+// Données structurées : pas d'offre tant qu'un prix reste à confirmer
+const prixConfirmes = d.prix.every((p) => !p.aConfirmer);
+const imagesLd = await Promise.all(
+  d.photos.map(async ({ src }) => new URL((await getImage({ src, width: 1200, format: 'jpg' })).src, SITE.url).href),
+);
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: d.nom,
+    description,
+    category: gamme.data.nom,
+    url: new URL(urlProduit(produit), SITE.url).href,
+    ...(imagesLd.length > 0 && { image: imagesLd }),
+    brand: { '@type': 'Brand', name: SITE.nom },
+    ...(prixConfirmes && {
+      offers: d.prix.map((p) => ({
+        '@type': 'Offer',
+        name: p.libelle,
+        price: p.montant.toFixed(2),
+        priceCurrency: 'EUR',
+        seller: { '@id': `${SITE.url}/#entreprise` },
+      })),
+    }),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Accueil', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'Produits', item: `${SITE.url}/produits/` },
+      { '@type': 'ListItem', position: 3, name: gamme.data.nom, item: new URL(urlGamme(d.gamme), SITE.url).href },
+      { '@type': 'ListItem', position: 4, name: d.nom, item: new URL(urlProduit(produit), SITE.url).href },
+    ],
+  },
+];
+---
+
+<BaseLayout title={d.nom} description={description} image={photoPrincipale?.src ?? gamme.data.photo} jsonLd={jsonLd}>
+  <div class="conteneur section fiche">
+    <div class="fiche__ariane">
+      <FilAriane
+        elements={[
+          { label: 'Accueil', href: '/' },
+          { label: 'Produits', href: '/produits/' },
+          { label: gamme.data.nom, href: urlGamme(d.gamme) },
+          { label: d.nom, href: urlProduit(produit) },
+        ]}
+      />
+    </div>
+
+    <div class="fiche__photos">
+      {
+        photoPrincipale ? (
+          <Image
+            class="fiche__photo-principale"
+            src={photoPrincipale.src}
+            alt={photoPrincipale.alt}
+            widths={[480, 720, 960, 1200]}
+            sizes="(min-width: 60rem) 32rem, 100vw"
+            loading="eager"
+            fetchpriority="high"
+          />
+        ) : (
+          <p class="fiche__sans-photo">
+            <span>
+              Photo à venir <AConfirmer />
+            </span>
+          </p>
+        )
+      }
+      {
+        autresPhotos.length > 0 && (
+          <ul class="fiche__vignettes" role="list">
+            {autresPhotos.map(({ src, alt }) => (
+              <li>
+                <Image src={src} alt={alt} widths={[240, 480]} sizes="(min-width: 60rem) 10rem, 33vw" />
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+
+    <div class="fiche__infos">
+      <p class="fiche__gamme">{gamme.data.nom}</p>
+      <h1>{d.nom}</h1>
+      {d.nomLatin && <p class="fiche__latin">{d.nomLatin}</p>}
+      {d.accroche && <p class="fiche__accroche">{d.accroche}</p>}
+
+      {
+        d.usageExterne && (
+          <p class="usage-externe" role="note">
+            <strong>À usage externe uniquement</strong>
+            <span>Ne pas avaler.</span>
+          </p>
+        )
+      }
+
+      <table class="prix">
+        <caption class="visually-hidden">Prix</caption>
+        <tbody>
+          {
+            d.prix.map((p) => (
+              <tr>
+                <th scope="row">{p.libelle}</th>
+                <td>
+                  {formaterPrix(p.montant)}
+                  {p.aConfirmer && <AConfirmer />}
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+
+      <div class="contenu">
+        <Content />
+        {
+          d.usage ? (
+            <p>{d.usage}</p>
+          ) : (
+            d.reformulation && (
+              <p class="en-attente">
+                Description en attente de validation <span class="ref">(réf. {d.reformulation})</span>
+              </p>
+            )
+          )
+        }
+      </div>
+
+      {
+        d.aConfirmer.length > 0 && (
+          <div class="points">
+            <p>
+              <AConfirmer />
+            </p>
+            <ul>
+              {d.aConfirmer.map((point) => (
+                <li>{point}</li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+
+      <a class="bouton" href="/ou-nous-trouver/">Où trouver ce produit</a>
+    </div>
+
+    <div class="fiche__details">
+      {
+        (d.composition || d.partieUtilisee) && (
+          <section aria-labelledby="composition">
+            <h2 id="composition">
+              {d.composition ? 'Composition' : 'Partie utilisée'}
+              {d.compositionAConfirmer && <AConfirmer />}
+            </h2>
+            {d.partieUtilisee && d.composition && <p>Partie utilisée : {d.partieUtilisee}</p>}
+            {d.partieUtilisee && !d.composition && <p>{d.partieUtilisee}</p>}
+            {d.composition && (
+              <ul>
+                {d.composition.map((c) => (
+                  <li>{c}</li>
+                ))}
+              </ul>
+            )}
+          </section>
+        )
+      }
+
+      {
+        d.posologie && (
+          <section aria-labelledby="posologie">
+            <h2 id="posologie">
+              {d.usageExterne ? 'Utilisation' : 'Conseils d’utilisation'}
+              {d.posologieAConfirmer && <AConfirmer />}
+            </h2>
+            <p>{d.posologie}</p>
+            {estAlcoolature && !d.usageExterne && <p>À diluer dans un verre d’eau.</p>}
+          </section>
+        )
+      }
+
+      {
+        d.precautions.length > 0 && (
+          <section aria-labelledby="precautions">
+            <h2 id="precautions">Précautions particulières</h2>
+            <ul>
+              {d.precautions.map((p) => (
+                <li>{p}</li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+
+      {
+        d.modeEmploi && (
+          <section aria-labelledby="mode-emploi">
+            <h2 id="mode-emploi">Mode d’emploi</h2>
+            <p>{d.modeEmploi}</p>
+          </section>
+        )
+      }
+
+      {
+        formats && (
+          <section aria-labelledby="formats">
+            <h2 id="formats">Formats et mode d’emploi</h2>
+            <dl class="formats">
+              {formats.map((f) => (
+                <div>
+                  <dt>{f.nom}</dt>
+                  <dd>
+                    {f.contenu} {f.modeEmploi}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+            <p>Ne respirez pas directement la fumée. Aérez si besoin.</p>
+          </section>
+        )
+      }
+
+      {estAlcoolature && <AvertissementAlcoolature usageExterne={d.usageExterne} />}
+    </div>
+  </div>
+
+  {
+    autres.length > 0 && (
+      <section class="section section--vert" aria-labelledby="autres-titre">
+        <div class="conteneur">
+          <h2 id="autres-titre" class="titre-souligne">
+            Dans la même gamme
+          </h2>
+          <ul class="grille" role="list">
+            {autres.map((p) => (
+              <li>
+                <CarteProduit produit={p} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>
+
+<style>
+  .fiche {
+    display: grid;
+    gap: 2rem;
+    grid-template-areas:
+      'ariane'
+      'photos'
+      'infos'
+      'details';
+  }
+
+  @media (min-width: 60rem) {
+    .fiche {
+      grid-template-columns: 32rem 1fr;
+      column-gap: 4rem;
+      grid-template-areas:
+        'ariane ariane'
+        'photos infos'
+        'photos details';
+      align-items: start;
+    }
+  }
+
+  .fiche__ariane {
+    grid-area: ariane;
+  }
+
+  .fiche__photos {
+    grid-area: photos;
+  }
+
+  @media (min-width: 60rem) {
+    .fiche__photos {
+      position: sticky;
+      top: 6rem;
+    }
+  }
+
+  .fiche__infos {
+    grid-area: infos;
+  }
+
+  .fiche__details {
+    grid-area: details;
+    display: grid;
+    gap: 2rem;
+  }
+
+  .fiche :global(.fiche__photo-principale) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: var(--rayon);
+    box-shadow: var(--ombre);
+  }
+
+  .fiche__sans-photo {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 3;
+    border: 1.5px dashed var(--ocre-texte);
+    border-radius: var(--rayon);
+    background: var(--vert-eau);
+  }
+
+  .fiche__vignettes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin: 0.75rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .fiche__vignettes :global(img) {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: calc(var(--rayon) * 0.6);
+  }
+
+  .fiche__gamme {
+    margin: 0;
+    color: var(--ocre-texte);
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .fiche h1 {
+    margin: 0.1em 0 0.1em;
+    font-size: clamp(2.75rem, 2rem + 3vw, 4rem);
+  }
+
+  .fiche__latin {
+    margin: 0 0 0.25rem;
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--encre-douce);
+  }
+
+  .fiche__accroche {
+    margin: 0 0 1rem;
+    font-family: var(--font-titre);
+    font-size: 1.7rem;
+    color: var(--ocre-texte);
+  }
+
+  .usage-externe {
+    display: flex;
+    flex-direction: column;
+    margin: 1rem 0;
+    padding: 1rem 1.25rem;
+    border-radius: var(--rayon);
+    background: var(--encre);
+    color: var(--blanc-casse);
+  }
+
+  .usage-externe strong {
+    font-size: 1.25rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ocre);
+  }
+
+  .prix {
+    width: 100%;
+    margin: 1.25rem 0 1.5rem;
+    border-collapse: collapse;
+  }
+
+  .prix th,
+  .prix td {
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgb(2 43 66 / 0.12);
+    text-align: left;
+    vertical-align: baseline;
+  }
+
+  .prix th {
+    font-weight: 600;
+    padding-right: 1rem;
+  }
+
+  .prix td {
+    font-size: 1.15rem;
+    font-weight: 800;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .en-attente,
+  .points {
+    padding: 0.75rem 1rem;
+    border: 1.5px dashed var(--ocre-texte);
+    border-radius: 0.75rem;
+    font-size: 0.92rem;
+  }
+
+  .points {
+    margin: 1rem 0 1.5rem;
+  }
+
+  .points p {
+    margin: 0;
+  }
+
+  .points ul {
+    margin: 0.4rem 0 0;
+    padding-left: 1.2em;
+  }
+
+  .ref {
+    color: var(--encre-douce);
+  }
+
+  .fiche__details h2 {
+    font-size: 2rem;
+  }
+
+  .fiche__details section p:last-child,
+  .fiche__details ul {
+    margin-bottom: 0;
+  }
+
+  .formats {
+    margin: 0 0 1rem;
+  }
+
+  .formats div + div {
+    margin-top: 0.75rem;
+  }
+
+  .formats dt {
+    font-weight: 800;
+  }
+
+  .formats dd {
+    margin: 0;
+  }
+
+  .grille {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 40rem) {
+    .grille {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .grille {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+  }
+</style>
