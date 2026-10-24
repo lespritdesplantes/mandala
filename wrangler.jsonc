@@ -1,0 +1,9 @@
+{
+  "name": "mandala-web",
+  "compatibility_date": "2026-10-01",
+  // Site statique : Astro génère dist/, servi tel quel par les Static Assets du Worker
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  }
+}

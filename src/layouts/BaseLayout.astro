@@ -14,9 +14,11 @@ interface Props {
   image?: ImageMetadata;
   /** Données structurées schema.org, injectées en JSON-LD. */
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  /** Page à exclure des moteurs de recherche (ex. : 404) */
+  noindex?: boolean;
 }
 
-const { title, description, image = imageParDefaut, jsonLd } = Astro.props;
+const { title, description, image = imageParDefaut, jsonLd, noindex = false } = Astro.props;
 
 const titreComplet = Astro.url.pathname === '/' ? SITE.nom : `${title} · ${SITE.nomCourt}`;
 const canonique = new URL(Astro.url.pathname, Astro.site);
@@ -31,7 +33,7 @@ const urlImagePartage = new URL(imagePartage.src, Astro.site);
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{titreComplet}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonique} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonique} />}
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />

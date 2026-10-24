@@ -1,0 +1,77 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import illustration from '../assets/photos/jardin-et-atelier/portrait/mante-religieuse.jpg';
+---
+
+<BaseLayout
+  title="Page introuvable"
+  description="Cette page n’existe pas ou a été déplacée."
+  noindex
+>
+  <section class="conteneur section introuvable">
+    <div>
+      <p class="introuvable__code">Erreur 404</p>
+      <h1>Cette page s’est égarée au jardin</h1>
+      <p>
+        La page que vous cherchez n’existe pas, ou elle a été déplacée. Vous pouvez reprendre le chemin depuis
+        l’accueil ou parcourir les produits.
+      </p>
+      <div class="introuvable__actions">
+        <a class="bouton" href="/">Retour à l’accueil</a>
+        <a class="bouton bouton--contour" href="/produits/">Voir les produits</a>
+      </div>
+    </div>
+    <Image
+      src={illustration}
+      alt="Une mante religieuse verte posée sur une claie de séchage"
+      widths={[320, 480, 720]}
+      sizes="(min-width: 48rem) 22rem, 70vw"
+    />
+  </section>
+</BaseLayout>
+
+<style>
+  .introuvable {
+    display: grid;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  @media (min-width: 48rem) {
+    .introuvable {
+      grid-template-columns: 1fr 22rem;
+      gap: 4rem;
+    }
+  }
+
+  .introuvable__code {
+    margin: 0;
+    color: var(--ocre-texte);
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .introuvable h1 {
+    margin-top: 0.25rem;
+  }
+
+  .introuvable__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .introuvable :global(img) {
+    width: 100%;
+    max-width: 22rem;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border-radius: var(--rayon);
+    box-shadow: var(--ombre);
+    transform: rotate(-1.5deg);
+  }
+</style>
