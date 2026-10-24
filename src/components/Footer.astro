@@ -1,4 +1,5 @@
 ---
+import IconeInstagram from './IconeInstagram.astro';
 import { GAMMES, NAVIGATION, SITE } from '../data/site';
 
 const annee = new Date().getFullYear();
@@ -15,6 +16,15 @@ const annee = new Date().getFullYear();
         {SITE.adresse.codePostal} {SITE.adresse.commune}<br />
         <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
       </address>
+      <a
+        class="pied__reseau"
+        href={SITE.instagram.url}
+        target="_blank"
+        rel="noopener"
+        aria-label="Instagram de L’esprit des plantes"
+      >
+        <IconeInstagram taille={24} />
+      </a>
     </div>
 
     <nav aria-labelledby="pied-produits">
@@ -109,6 +119,16 @@ const annee = new Date().getFullYear();
 
   .pied address {
     font-style: normal;
+  }
+
+  .pied__reseau {
+    display: inline-grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-top: 1rem;
+    margin-left: -0.6rem;
+    border-radius: 50%;
   }
 
   .pied ul {

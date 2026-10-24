@@ -11,6 +11,7 @@ export const localBusiness = {
   logo: `${SITE.url}/logo.png`,
   image: `${SITE.url}/logo.png`,
   email: SITE.email,
+  sameAs: [SITE.instagram.url],
   vatID: SITE.tva,
   founder: { '@type': 'Person', name: SITE.productrice },
   address: {

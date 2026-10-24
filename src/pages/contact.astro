@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import FilAriane from '../components/FilAriane.astro';
+import IconeInstagram from '../components/IconeInstagram.astro';
 import { SITE } from '../data/site';
 import { localBusiness } from '../data/jsonld';
 import photo from '../assets/photos/jardin-et-atelier/paysage/moi-ac-panier.jpg';
@@ -47,6 +48,12 @@ const jsonLd = {
           {SITE.email}
         </a>
       </p>
+      <p class="instagram">
+        <a href={SITE.instagram.url} target="_blank" rel="noopener">
+          <IconeInstagram />
+          Instagram : {SITE.instagram.compte}<span class="visually-hidden"> (nouvel onglet)</span>
+        </a>
+      </p>
 
       <h2 class="titre-souligne">Mandala – L’esprit des plantes</h2>
       <address>
@@ -55,7 +62,7 @@ const jsonLd = {
         {SITE.adresse.codePostal} {SITE.adresse.commune}
       </address>
       <p class="note">
-        Pour découvrir les produits, retrouvez-moi
+        Pour découvrir les produits, retrouvez-moi{' '}
         <a href="/ou-nous-trouver/">sur les marchés et en boutique</a>.
       </p>
     </div>
@@ -93,7 +100,23 @@ const jsonLd = {
   }
 
   .email {
-    margin: 1.75rem 0 2.5rem;
+    margin: 1.75rem 0 1rem;
+  }
+
+  .instagram {
+    margin: 0 0 2.5rem;
+  }
+
+  .instagram a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+  }
+
+  .instagram svg {
+    flex-shrink: 0;
   }
 
   .email .bouton {

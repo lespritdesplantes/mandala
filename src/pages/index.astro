@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PictureDirection from '../components/PictureDirection.astro';
 import IconeEngagement from '../components/IconeEngagement.astro';
+import IconeInstagram from '../components/IconeInstagram.astro';
 import { SITE } from '../data/site';
 import { localBusiness } from '../data/jsonld';
 
@@ -14,6 +15,12 @@ import sechoirRoses from '../assets/photos/jardin-et-atelier/paysage/sechoir.jpg
 import abeillePavot from '../assets/photos/jardin-et-atelier/portrait/abeille-pavot.jpg';
 import potMacerat from '../assets/photos/jardin-et-atelier/portrait/pot-macerat.jpg';
 import atelier from '../assets/photos/jardin-et-atelier/portrait/moi-atelier.jpg';
+import allee from '../assets/photos/jardin-et-atelier/portrait/jardin.jpg';
+import panierSauge from '../assets/photos/jardin-et-atelier/portrait/cueillette.jpg';
+import plantesSeches from '../assets/photos/jardin-et-atelier/portrait/plantes-seches.jpg';
+import melangeEncens from '../assets/photos/jardin-et-atelier/portrait/melange-encens.jpg';
+import huileApaisante from '../assets/photos/huiles-de-massage/huile-amande-rose-marjolaine.jpg';
+import porteEncensFleur from '../assets/photos/porte-encens/fleur-qui-fume.jpg';
 
 import { gammesTriees, urlGamme } from '../lib/produits';
 
@@ -44,6 +51,16 @@ const mosaique = [
   { src: sechoirRoses, alt: 'Claies de séchage chargées de pétales et de boutons de roses' },
   { src: potMacerat, alt: 'Grand bocal de fleurs en macération dans l’huile, à la lumière' },
   { src: atelier, alt: 'Cécile au travail dans l’atelier, entourée d’étagères de bocaux' },
+];
+
+// Mosaïque Instagram : nos propres photos, chacune en lien vers le compte (aucun contenu chargé depuis Meta)
+const mosaiqueInstagram = [
+  { src: allee, alt: 'Allée du jardin bordée de plantes aromatiques au feuillage argenté' },
+  { src: panierSauge, alt: 'Panier de cueillette garni de sauge et de feuilles fraîches' },
+  { src: plantesSeches, alt: 'Plateau de plantes séchées réparties dans des coupelles' },
+  { src: melangeEncens, alt: 'Poudres de plantes et de bois mélangées pour préparer l’encens' },
+  { src: huileApaisante, alt: 'Flacon d’huile de massage amande douce, rose de Damas et marjolaine au jardin' },
+  { src: porteEncensFleur, alt: 'Porte-encens en forme de fleur, une barrette d’encens fumant plantée dans le trou latéral' },
 ];
 
 const gammes = await gammesTriees();
@@ -173,6 +190,41 @@ const jsonLd = localBusiness;
         </p>
       </blockquote>
       <a class="bouton" href="/ou-nous-trouver/">Me retrouver sur les marchés</a>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="instagram-titre">
+    <div class="conteneur">
+      <div class="entete-section">
+        <div>
+          <h2 id="instagram-titre" class="titre-souligne">Suivez la ferme au fil des jours</h2>
+          <p class="instagram__intro">
+            Le jardin, les cueillettes, l’atelier et les marchés : les nouvelles de la ferme sont sur Instagram.
+          </p>
+        </div>
+        <p class="instagram__compte">
+          <IconeInstagram />
+          {SITE.instagram.compte}
+        </p>
+      </div>
+      <ul class="instagram" role="list">
+        {
+          mosaiqueInstagram.map(({ src, alt }) => (
+            <li>
+              <a class="cadre-zoom instagram__lien" href={SITE.instagram.url} target="_blank" rel="noopener">
+                <Image src={src} alt={alt} widths={[240, 400, 640]} sizes="(min-width: 60rem) 16vw, (min-width: 40rem) 33vw, 50vw" />
+                <span class="visually-hidden"> (Instagram, nouvel onglet)</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="instagram__action">
+        <a class="bouton" href={SITE.instagram.url} target="_blank" rel="noopener">
+          <IconeInstagram />
+          Suivre sur Instagram<span class="visually-hidden"> (nouvel onglet)</span>
+        </a>
+      </p>
     </div>
   </section>
 </BaseLayout>
@@ -436,6 +488,57 @@ const jsonLd = localBusiness;
     .gamme:hover :global(img) {
       transform: scale(1.05);
     }
+  }
+
+  /* Instagram */
+  .instagram__intro {
+    max-width: 36rem;
+    margin: 1rem 0 0;
+  }
+
+  .instagram__compte {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0;
+    font-weight: 700;
+    color: var(--ocre-texte);
+    overflow-wrap: anywhere;
+  }
+
+  .instagram__compte :global(svg) {
+    flex-shrink: 0;
+  }
+
+  .instagram {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 40rem) {
+    .instagram {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (min-width: 60rem) {
+    .instagram {
+      grid-template-columns: repeat(6, 1fr);
+      gap: 1rem;
+    }
+  }
+
+  .instagram__lien {
+    aspect-ratio: 1;
+  }
+
+  .instagram__action {
+    margin: 2rem 0 0;
+    text-align: center;
   }
 
   /* Conclusion */

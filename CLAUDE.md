@@ -128,7 +128,7 @@ Les points en suspens restent **marqués dans les fichiers de contenu**, mais ne
 
 ## Arborescence
 
-- `/` : accueil (héro, « Du jardin au flacon », engagements Biologique, Éthique et Artisanal avec icônes SVG, mosaïque « Au fil des saisons », gammes)
+- `/` : accueil (héro, « Du jardin au flacon », engagements Biologique, Éthique et Artisanal avec icônes SVG, mosaïque « Au fil des saisons », gammes, section Instagram « Suivez la ferme au fil des jours »)
 - `/produits/` : vue d'ensemble des gammes
   - `/produits/<gamme>/` : alcoolatures, baumes, huiles-de-massage, encens, batons-de-fumigation, porte-encens
   - `/produits/<gamme>/<produit>/` : fiche produit
@@ -169,5 +169,6 @@ Les textes d'origine sont dans `sources/` (fichiers .odt et .pdf, versionnés). 
 - Mobile d'abord, accessibilité WCAG AA (contraste, `alt` sur toutes les photos, navigation au clavier).
 - Lighthouse au-dessus de 90 partout.
 - SEO : `title` et `description` par page, Open Graph avec image, `sitemap.xml`, données structurées `LocalBusiness`, `Product`, `BreadcrumbList`, `ItemList` et `Event`.
+- **Réseaux sociaux : lien uniquement, jamais d'embed Meta** (ni widget, ni script, ni image chargée depuis Instagram ou Facebook). Compte Instagram : `SITE.instagram` dans `src/data/site.ts` (`@l.esprit.des.plantes_mandala`), repris dans `sameAs` du `LocalBusiness`. La mosaïque de l'accueil utilise nos propres photos, en lien vers le compte ; icône dans `src/components/IconeInstagram.astro` (pied de page, contact, accueil).
 - Pas de cookies ni de traceurs tiers. Si une mesure d'audience est nécessaire, utiliser Cloudflare Web Analytics (et mettre à jour les mentions légales).
 - Formulaire de contact : `mailto:` pour l'instant. Pour un vrai formulaire, il faudra ajouter un script au Worker (clé `main` dans `wrangler.jsonc`) avec envoi par e-mail. Les Pages Functions ne s'appliquent pas ici.

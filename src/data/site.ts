@@ -17,6 +17,11 @@ export const SITE = {
     region: 'Nouvelle-Aquitaine',
     pays: 'FR',
   },
+  // Réseaux sociaux : simple lien sortant, jamais d'intégration (embed, widget, script Meta)
+  instagram: {
+    url: 'https://www.instagram.com/l.esprit.des.plantes_mandala/',
+    compte: '@l.esprit.des.plantes_mandala',
+  },
   siren: '814 695 524',
   tva: 'FR88814695524',
   hebergeur: {
