@@ -7,6 +7,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import FilAriane from '../../../components/FilAriane.astro';
 import CarteProduit from '../../../components/CarteProduit.astro';
 import AvertissementAlcoolature from '../../../components/AvertissementAlcoolature.astro';
+import Visionneuse from '../../../components/Visionneuse.astro';
 import {
   formaterPrix,
   produitsDeLaGamme,
@@ -30,7 +31,14 @@ const gamme = (await getEntry('gammes', d.gamme))!;
 const { Content } = await render(produit);
 const estAlcoolature = d.gamme === 'alcoolatures';
 const autres = (await produitsDeLaGamme(d.gamme)).filter((p) => p.id !== produit.id);
-const [photoPrincipale, ...autresPhotos] = d.photos;
+// Version agrandie de chaque photo pour la visionneuse (et pour le lien sans JavaScript)
+const photos = await Promise.all(
+  d.photos.map(async (p) => ({
+    ...p,
+    grande: await getImage({ src: p.src, width: Math.min(1600, p.src.width), format: 'webp', quality: 78 }),
+  })),
+);
+const [photoPrincipale, ...autresPhotos] = photos;
 const formats = gamme.data.formats;
 
 const description = `${d.nom}${d.nomLatin ? ` (${d.nomLatin})` : ''} – ${gamme.data.nom}. ${gamme.data.accroche}`;
@@ -91,15 +99,23 @@ const jsonLd = [
     <div class="fiche__photos">
       {
         photoPrincipale ? (
-          <Image
-            class="fiche__photo-principale"
-            src={photoPrincipale.src}
-            alt={photoPrincipale.alt}
-            widths={[480, 720, 960, 1200]}
-            sizes="(min-width: 60rem) 32rem, 100vw"
-            loading="eager"
-            fetchpriority="high"
-          />
+          <a
+            class="cadre-zoom fiche__lien fiche__lien--principal"
+            href={photoPrincipale.grande.src}
+            data-visionneuse
+            data-largeur={photoPrincipale.grande.attributes.width}
+            data-hauteur={photoPrincipale.grande.attributes.height}
+            aria-haspopup="dialog"
+          >
+            <Image
+              src={photoPrincipale.src}
+              alt={photoPrincipale.alt}
+              widths={[480, 720, 960, 1200]}
+              sizes="(min-width: 60rem) 32rem, 100vw"
+              loading="eager"
+              fetchpriority="high"
+            />
+          </a>
         ) : (
           <div class="fiche__sans-photo">
             <Image src={logo} alt="" width={140} />
@@ -109,9 +125,18 @@ const jsonLd = [
       {
         autresPhotos.length > 0 && (
           <ul class="fiche__vignettes" role="list">
-            {autresPhotos.map(({ src, alt }) => (
+            {autresPhotos.map(({ src, alt, grande }) => (
               <li>
-                <Image src={src} alt={alt} widths={[240, 480]} sizes="(min-width: 60rem) 10rem, 33vw" />
+                <a
+                  class="cadre-zoom fiche__lien"
+                  href={grande.src}
+                  data-visionneuse
+                  data-largeur={grande.attributes.width}
+                  data-hauteur={grande.attributes.height}
+                  aria-haspopup="dialog"
+                >
+                  <Image src={src} alt={alt} widths={[240, 480]} sizes="(min-width: 60rem) 10rem, 33vw" />
+                </a>
               </li>
             ))}
           </ul>
@@ -265,6 +290,8 @@ const jsonLd = [
       </section>
     )
   }
+
+  {photos.length > 0 && <Visionneuse />}
 </BaseLayout>
 
 <style>
@@ -315,10 +342,12 @@ const jsonLd = [
     gap: 2rem;
   }
 
-  .fiche :global(.fiche__photo-principale) {
-    width: 100%;
+  .fiche__lien {
+    cursor: zoom-in;
+  }
+
+  .fiche__lien--principal {
     aspect-ratio: 4 / 5;
-    object-fit: cover;
     border-radius: var(--rayon);
     box-shadow: var(--ombre);
   }
@@ -345,10 +374,8 @@ const jsonLd = [
     list-style: none;
   }
 
-  .fiche__vignettes :global(img) {
-    width: 100%;
+  .fiche__vignettes .fiche__lien {
     aspect-ratio: 1;
-    object-fit: cover;
     border-radius: calc(var(--rayon) * 0.6);
   }
 

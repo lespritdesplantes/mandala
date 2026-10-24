@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import FilAriane from '../components/FilAriane.astro';
+import BoutonItineraire from '../components/BoutonItineraire.astro';
+import Adresse from '../components/Adresse.astro';
 import { BOUTIQUES, MARCHES, evenementsAVenir, formaterPeriode } from '../data/lieux';
 import { SITE } from '../data/site';
 
@@ -16,8 +18,14 @@ const jsonLd = evenements.map((e) => ({
   eventStatus: 'https://schema.org/EventScheduled',
   location: {
     '@type': 'Place',
-    name: e.lieu,
-    address: { '@type': 'PostalAddress', addressLocality: e.ville, addressCountry: 'FR' },
+    name: e.adresse.lieu ?? e.adresse.ville,
+    address: {
+      '@type': 'PostalAddress',
+      ...(e.adresse.rue && { streetAddress: e.adresse.rue }),
+      postalCode: e.adresse.codePostal,
+      addressLocality: e.adresse.ville,
+      addressCountry: 'FR',
+    },
   },
   organizer: { '@id': `${SITE.url}/#entreprise` },
 }));
@@ -32,7 +40,7 @@ const jsonLd = evenements.map((e) => ({
     <FilAriane elements={[{ label: 'Accueil', href: '/' }, { label: 'Où nous trouver', href: '/ou-nous-trouver/' }]} />
     <h1>Où nous trouver</h1>
     <p class="chapo">
-      Les produits sont en vente dans deux herboristeries, et je vous retrouve avec plaisir sur les marchés et
+      Les produits sont en vente dans trois herboristeries, à Bordeaux, Rions et Pau, et je vous retrouve avec plaisir sur les marchés et
       les festivals de la région.
     </p>
   </div>
@@ -49,9 +57,10 @@ const jsonLd = evenements.map((e) => ({
               </p>
               <h3>{e.nom}</h3>
               {e.description && <p class="carte__detail">{e.description}</p>}
-              <p>
-                {e.lieu}, {e.ville} ({e.departement})
-              </p>
+              <Adresse adresse={e.adresse} />
+              <div class="carte__action">
+                <BoutonItineraire adresse={e.adresse} nom={`${e.nom}, ${e.adresse.ville}`} />
+              </div>
             </li>
           ))
         }
@@ -60,7 +69,7 @@ const jsonLd = evenements.map((e) => ({
             <li class="carte">
               <p class="carte__surtitre">Rendez-vous régulier</p>
               <h3>{m.nom}</h3>
-              <p class="carte__detail">{m.lieu}</p>
+              <Adresse adresse={m.adresse} />
               <p>
                 {m.frequence}
                 {m.horaires && (
@@ -70,6 +79,9 @@ const jsonLd = evenements.map((e) => ({
                   </>
                 )}
               </p>
+              <div class="carte__action">
+                <BoutonItineraire adresse={m.adresse} nom={`${m.nom}, ${m.adresse.ville}`} />
+              </div>
             </li>
           ))
         }
@@ -86,7 +98,16 @@ const jsonLd = evenements.map((e) => ({
             <li class="carte carte--claire">
               <p class="carte__surtitre">{b.type}</p>
               <h3>{b.nom}</h3>
-              <p>{b.villes}</p>
+              <p class="carte__detail">{b.ville}</p>
+              <Adresse adresse={b.adresse} />
+              {b.telephone && (
+                <p>
+                  Tél. <a href={`tel:${b.telephone.international}`}>{b.telephone.affiche}</a>
+                </p>
+              )}
+              <div class="carte__action">
+                <BoutonItineraire adresse={b.adresse} nom={`${b.nom}, ${b.ville}`} />
+              </div>
             </li>
           ))
         }
@@ -150,8 +171,20 @@ const jsonLd = evenements.map((e) => ({
     font-size: 2.1rem;
   }
 
+  .carte {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .carte p {
     margin: 0;
+  }
+
+  /* Bouton aligné en bas de carte, quelle que soit la longueur de l'adresse */
+  .carte__action {
+    margin-top: auto;
+    padding-top: 1.25rem;
   }
 
   .carte__surtitre {

@@ -1,10 +1,10 @@
 # Reformulations à valider
 
-Ce fichier propose une reformulation de chaque texte des sources qui contient une allégation thérapeutique ou un terme exclu du site (« cicatrisant », « anti-inflammatoire »). **Seule la phrase de l'accueil (ACC-1) est intégrée au site**, car elle avait déjà été validée. Les autres textes ne sont pas publiés : à leur place, les pages produits affichent l'encart « Description en attente de validation » avec l'identifiant correspondant (ALC-1, HUI-2…).
+Ce fichier propose une reformulation de chaque texte des sources qui contient une allégation thérapeutique ou un terme exclu du site (« cicatrisant », « anti-inflammatoire »). **Seule la phrase de l'accueil (ACC-1) est intégrée au site**, car elle avait déjà été validée. Les autres textes ne sont pas publiés : chaque fiche concernée porte l'identifiant de sa reformulation dans le champ `reformulation:` (ALC-1, HUI-2…), sans champ `usage`.
 
 **En production, en attendant la validation** : chaque fiche affiche une présentation neutre (plante, partie utilisée, origine, fabrication), sans allégation. Le bloc de précautions reste affiché. Les photos dont l'étiquette porte une allégation lisible sont retirées du site.
 
-Pour valider une proposition, cocher la case ou la corriger directement dans ce fichier. Une fois la proposition validée, il suffit de reporter le texte dans le champ `usage` (ou dans le corps de la fiche) du fichier `src/content/produits/…` concerné.
+Pour valider une proposition, cocher la case ou la corriger directement dans ce fichier. Une fois la proposition validée, il suffit de reporter le texte dans le champ `usage` du fichier `src/content/produits/…` concerné, puis de lancer `npm run verifier`.
 
 Principes suivis :
 
@@ -266,5 +266,5 @@ Ces photos ne sont pas retouchées. Elles sont **toutes retirées du site** en a
 
 ## Reste à faire
 
-- **Tableau « Usages et précautions »** (`tableau alcoolature version2.pdf`) : la colonne « usages traditionnels » contient les mêmes allégations : anxiolytique, cholestérol, cystites, fractures, aide au sevrage… Il faudra la reformuler avant de publier la page `/usages-et-precautions/` et le PDF à télécharger.
+- **Tableau « Usages et précautions »** (`tableau alcoolature version2.pdf`) : la colonne « usages traditionnels » contient les mêmes allégations : anxiolytique, cholestérol, cystites, fractures, aide au sevrage… Ce PDF n'est **pas publié**. La page `/usages-et-precautions/`, déjà en ligne, est un tableau HTML généré à partir des fiches alcoolatures : elle ne reprend que les textes neutres et les précautions. Une nouvelle version du tableau, sans allégations, reste à faire pour un éventuel PDF.
 - **Étiquettes et flyer** : ils contiennent eux aussi des allégations. C'est hors du périmètre du site, mais à signaler.

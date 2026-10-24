@@ -1,0 +1,29 @@
+---
+// Adresse postale d'un lieu de vente, sur plusieurs lignes.
+import type { Adresse } from '../data/lieux';
+
+interface Props {
+  adresse: Adresse;
+}
+
+const { lieu, rue, codePostal, ville, precision } = Astro.props.adresse;
+---
+
+<address>
+  {lieu && <>{lieu}<br /></>}
+  {rue && <>{rue}<br /></>}
+  {codePostal} {ville}
+  {precision && <span class="precision">{precision}</span>}
+</address>
+
+<style>
+  address {
+    font-style: normal;
+  }
+
+  .precision {
+    display: block;
+    font-size: 0.9em;
+    color: var(--encre-douce);
+  }
+</style>

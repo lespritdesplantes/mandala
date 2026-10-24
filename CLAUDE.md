@@ -74,7 +74,7 @@ Ces valeurs restent dans les fichiers de `src/content/`, mais ne s'affichent jam
 8. Les étiquettes et le flyer contiennent aussi des allégations : à corriger lors de la prochaine impression (hors site).
 9. Nom de l'huile « Réparatrice ». Porte-encens : « Double feu » et « dragon / licorne ».
 10. La photo `achilee.jpeg` montre-t-elle de l'achillée ou de la valériane ? Dans la galerie, son `alt` reste neutre.
-11. Lieux de vente : adresses des herboristeries, vente en ligne (rubrique vide), marché de Bazas (présent sur le flyer, absent de la page) et prochains événements.
+11. Lieux de vente : vente en ligne (rubrique vide), marché de Bazas (présent sur le flyer, absent de la page) et prochains événements.
 12. Tableau des usages : nouvelle version sans allégations, pour un éventuel PDF.
 13. Vidéos : choix de l'hébergement (Cloudflare Stream, R2 ou YouTube).
 14. Téléphone : à publier un jour ou non.
@@ -133,8 +133,9 @@ Les points en suspens restent **marqués dans les fichiers de contenu**, mais ne
   - `/produits/<gamme>/` : alcoolatures, baumes, huiles-de-massage, encens, batons-de-fumigation, porte-encens
   - `/produits/<gamme>/<produit>/` : fiche produit
 - `/usages-et-precautions/` : tableau des alcoolatures (cartes sur mobile), **sans PDF**
-- `/jardin-et-atelier/` : galerie de 30 photos avec visionneuse accessible (`<dialog>`, flèches, Échap) ; les vidéos viendront plus tard
-- `/ou-nous-trouver/` : herboristeries, Joyeux Marché de Préchac, événements datés
+- `/jardin-et-atelier/` : galerie de 30 photos avec visionneuse accessible ; les vidéos viendront plus tard
+- Visionneuse partagée (`src/components/Visionneuse.astro`, `<dialog>`, flèches, Échap, swipe) : galerie et toutes les photos des fiches produits, via les liens `a[data-visionneuse]`
+- `/ou-nous-trouver/` : herboristeries (Bordeaux, Rions, Pau), Joyeux Marché de Préchac, événements datés ; adresses complètes et bouton « Itinéraire » vers Google Maps (`src/components/BoutonItineraire.astro`)
 - `/contact/` : e-mail en `mailto:`
 - `/mentions-legales/` : éditrice, SIREN, TVA, hébergeur, crédits, données personnelles
 

@@ -1,0 +1,205 @@
+---
+// Visionneuse de photos partagée (galerie, fiches produits).
+// S'ouvre au clic sur tout lien `a[data-visionneuse]` de la page, qui pointe vers la version agrandie
+// de la photo et porte `data-largeur` / `data-hauteur`. Le texte de la légende est l'`alt` de la vignette.
+// Navigation : boutons, flèches du clavier, swipe sur écran tactile ; Échap ferme (natif avec <dialog>).
+---
+
+<dialog class="visionneuse" aria-label="Visionneuse de photos">
+  <figure>
+    <img class="visionneuse__image" src="" alt="" />
+    <figcaption>
+      <span class="visionneuse__texte"></span>
+      <span class="visionneuse__compteur" aria-live="polite"></span>
+    </figcaption>
+  </figure>
+  <button class="visionneuse__bouton visionneuse__fermer" type="button" aria-label="Fermer la visionneuse">
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false">
+      <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+    </svg>
+  </button>
+  <button class="visionneuse__bouton visionneuse__precedente" type="button" aria-label="Photo précédente">
+    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+      <path d="m15 5-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>
+  </button>
+  <button class="visionneuse__bouton visionneuse__suivante" type="button" aria-label="Photo suivante">
+    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+      <path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>
+  </button>
+</dialog>
+
+<script>
+  const dialogue = document.querySelector<HTMLDialogElement>('.visionneuse');
+  const liens = [...document.querySelectorAll<HTMLAnchorElement>('a[data-visionneuse]')];
+
+  if (dialogue && liens.length > 0 && typeof dialogue.showModal === 'function') {
+    const image = dialogue.querySelector<HTMLImageElement>('.visionneuse__image')!;
+    const texte = dialogue.querySelector<HTMLElement>('.visionneuse__texte')!;
+    const compteur = dialogue.querySelector<HTMLElement>('.visionneuse__compteur')!;
+    const precedente = dialogue.querySelector<HTMLButtonElement>('.visionneuse__precedente')!;
+    const suivante = dialogue.querySelector<HTMLButtonElement>('.visionneuse__suivante')!;
+    let courant = 0;
+    let declencheur: HTMLElement | null = null;
+
+    // Une seule photo : pas de navigation
+    precedente.hidden = suivante.hidden = liens.length < 2;
+
+    const afficher = (index: number) => {
+      courant = (index + liens.length) % liens.length;
+      const lien = liens[courant];
+      const vignette = lien.querySelector('img');
+      image.src = lien.href;
+      image.alt = vignette?.alt ?? '';
+      image.width = Number(lien.dataset.largeur);
+      image.height = Number(lien.dataset.hauteur);
+      texte.textContent = vignette?.alt ?? '';
+      compteur.textContent = liens.length > 1 ? `Photo ${courant + 1} sur ${liens.length}` : '';
+    };
+
+    liens.forEach((lien, i) => {
+      lien.addEventListener('click', (e) => {
+        // Laisse le comportement normal pour ouvrir dans un nouvel onglet
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+        e.preventDefault();
+        declencheur = lien;
+        afficher(i);
+        dialogue.showModal();
+        dialogue.querySelector<HTMLButtonElement>('.visionneuse__fermer')!.focus();
+      });
+    });
+
+    dialogue.querySelector('.visionneuse__fermer')!.addEventListener('click', () => dialogue.close());
+    precedente.addEventListener('click', () => afficher(courant - 1));
+    suivante.addEventListener('click', () => afficher(courant + 1));
+
+    dialogue.addEventListener('keydown', (e) => {
+      if (liens.length < 2) return;
+      if (e.key === 'ArrowLeft') afficher(courant - 1);
+      if (e.key === 'ArrowRight') afficher(courant + 1);
+    });
+
+    // Swipe horizontal : photo suivante vers la gauche, précédente vers la droite
+    let departX = 0;
+    let departY = 0;
+    dialogue.addEventListener(
+      'touchstart',
+      (e) => {
+        departX = e.changedTouches[0].clientX;
+        departY = e.changedTouches[0].clientY;
+      },
+      { passive: true },
+    );
+    dialogue.addEventListener('touchend', (e) => {
+      if (liens.length < 2) return;
+      const dx = e.changedTouches[0].clientX - departX;
+      const dy = e.changedTouches[0].clientY - departY;
+      if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy)) return;
+      afficher(dx < 0 ? courant + 1 : courant - 1);
+    });
+
+    // Clic sur le fond assombri : fermeture
+    dialogue.addEventListener('click', (e) => {
+      if (e.target === dialogue) dialogue.close();
+    });
+
+    // Rend le focus à la vignette d'origine
+    dialogue.addEventListener('close', () => {
+      declencheur?.focus();
+      image.removeAttribute('src');
+    });
+  }
+</script>
+
+<style>
+  .visionneuse {
+    width: 100vw;
+    max-width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    padding: 3.5rem 0.75rem 1rem;
+    border: 0;
+    background: rgb(2 43 66 / 0.96);
+    color: var(--blanc-casse);
+    touch-action: pan-y pinch-zoom;
+  }
+
+  .visionneuse::backdrop {
+    background: rgb(2 43 66 / 0.8);
+  }
+
+  .visionneuse figure {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    height: 100%;
+    margin: 0;
+  }
+
+  .visionneuse__image {
+    max-width: min(100%, 72rem);
+    max-height: calc(100% - 4rem);
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 0.5rem;
+  }
+
+  .visionneuse figcaption {
+    max-width: 50rem;
+    text-align: center;
+  }
+
+  .visionneuse__compteur {
+    display: block;
+    margin-top: 0.2rem;
+    color: var(--ocre);
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+
+  .visionneuse__bouton {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    width: 2.9rem;
+    height: 2.9rem;
+    border: 2px solid rgb(251 250 246 / 0.6);
+    border-radius: 50%;
+    background: rgb(2 43 66 / 0.7);
+    color: var(--blanc-casse);
+    cursor: pointer;
+  }
+
+  .visionneuse__bouton[hidden] {
+    display: none;
+  }
+
+  .visionneuse__bouton:hover {
+    border-color: var(--ocre);
+    color: var(--ocre);
+  }
+
+  .visionneuse__fermer {
+    top: 0.5rem;
+    right: 0.75rem;
+  }
+
+  .visionneuse__precedente,
+  .visionneuse__suivante {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .visionneuse__precedente {
+    left: 0.75rem;
+  }
+
+  .visionneuse__suivante {
+    right: 0.75rem;
+  }
+</style>
