@@ -35,6 +35,7 @@ const DOSSIERS = [
 const RENOMMAGES = {
   // doublon de nom dans l'ancien dossier portrait ; seule photo « jardin » en paysage
   'jardin-et-atelier/jardinn': 'jardin',
+  'encens/cones-eucalyptrus': 'cones-eucalyptus',
 };
 
 export function slugifier(nom) {

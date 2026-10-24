@@ -1,0 +1,152 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FilAriane from '../../components/FilAriane.astro';
+import { gammesTriees, produitsDeLaGamme, urlGamme } from '../../lib/produits';
+
+const gammes = await Promise.all(
+  (await gammesTriees()).map(async (gamme) => ({
+    gamme,
+    nombre: (await produitsDeLaGamme(gamme.id)).length,
+  })),
+);
+---
+
+<BaseLayout
+  title="Les produits"
+  description="Alcoolatures, baumes, huiles de massage, encens, bâtons de fumigation et porte-encens : des produits artisanaux faits main à partir de plantes cultivées en bio ou cueillies en Aquitaine."
+>
+  <div class="conteneur section entete-page">
+    <FilAriane elements={[{ label: 'Accueil', href: '/' }, { label: 'Produits', href: '/produits/' }]} />
+    <h1>Les produits</h1>
+    <p class="chapo">
+      Transformations artisanales issues de ma production biologique ou de cueillette sauvage : chaque produit est
+      fait main, au rythme des saisons.
+    </p>
+  </div>
+
+  <section class="section section--vert" aria-label="Les gammes">
+    <ul class="conteneur gammes" role="list">
+      {
+        gammes.map(({ gamme, nombre }) => (
+          <li class="gamme">
+            <Image
+              src={gamme.data.photo}
+              alt={gamme.data.photoAlt}
+              widths={[480, 720, 960]}
+              sizes="(min-width: 60rem) 34rem, 100vw"
+            />
+            <div class="gamme__texte">
+              <h2>
+                <a href={urlGamme(gamme.id)}>{gamme.data.nom}</a>
+              </h2>
+              <p>{gamme.data.accroche}</p>
+              <p class="gamme__nombre">
+                {nombre} produit{nombre > 1 && 's'}
+              </p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</BaseLayout>
+
+<style>
+  .entete-page {
+    padding-bottom: 2rem;
+  }
+
+  .entete-page h1 {
+    margin-top: 1.25rem;
+  }
+
+  .chapo {
+    max-width: 42rem;
+    font-size: 1.15em;
+  }
+
+  .gammes {
+    display: grid;
+    gap: 1.5rem;
+    margin-block: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 48rem) {
+    .gammes {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .gamme {
+    position: relative;
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    overflow: hidden;
+    border-radius: var(--rayon);
+    background: var(--blanc-casse);
+    box-shadow: var(--ombre);
+    transition: transform 0.25s;
+  }
+
+  @media (min-width: 30rem) {
+    .gamme {
+      grid-template-columns: 12rem 1fr;
+    }
+  }
+
+  .gamme:hover,
+  .gamme:focus-within {
+    transform: translateY(-3px);
+  }
+
+  .gamme:focus-within {
+    outline: 3px solid var(--ocre);
+    outline-offset: 3px;
+  }
+
+  .gamme :global(img) {
+    width: 100%;
+    height: 100%;
+    min-height: 12rem;
+    object-fit: cover;
+  }
+
+  .gamme__texte {
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem;
+  }
+
+  .gamme h2 {
+    margin-bottom: 0.3rem;
+    font-size: clamp(1.9rem, 1.6rem + 1vw, 2.5rem);
+  }
+
+  .gamme h2 a {
+    color: var(--encre);
+    text-decoration: none;
+  }
+
+  .gamme h2 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .gamme h2 a:focus-visible {
+    outline: none;
+  }
+
+  .gamme p {
+    margin: 0;
+  }
+
+  .gamme__nombre {
+    margin-top: auto !important;
+    padding-top: 0.75rem;
+    color: var(--ocre-texte);
+    font-weight: 800;
+  }
+</style>

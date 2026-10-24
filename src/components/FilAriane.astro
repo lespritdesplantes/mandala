@@ -1,0 +1,49 @@
+---
+interface Props {
+  /** Le dernier élément est la page courante (sans lien) */
+  elements: { label: string; href: string }[];
+}
+const { elements } = Astro.props;
+---
+
+<nav class="fil-ariane" aria-label="Fil d’Ariane">
+  <ol>
+    {
+      elements.map(({ label, href }, i) => (
+        <li>
+          {i === elements.length - 1 ? (
+            <span aria-current="page">{label}</span>
+          ) : (
+            <a href={href}>{label}</a>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+
+<style>
+  .fil-ariane ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.9rem;
+  }
+
+  .fil-ariane li + li::before {
+    content: '›';
+    margin: 0 0.5rem;
+    color: var(--encre-douce);
+  }
+
+  .fil-ariane a {
+    color: var(--encre-douce);
+  }
+
+  .fil-ariane [aria-current] {
+    font-weight: 700;
+  }
+</style>

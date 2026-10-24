@@ -1,0 +1,264 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { Image } from 'astro:assets';
+import { render } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import FilAriane from '../../../components/FilAriane.astro';
+import CarteProduit from '../../../components/CarteProduit.astro';
+import AvertissementAlcoolature from '../../../components/AvertissementAlcoolature.astro';
+import AConfirmer from '../../../components/AConfirmer.astro';
+import { gammesTriees, produitsDeLaGamme, urlGamme, urlProduit } from '../../../lib/produits';
+import { SITE } from '../../../data/site';
+
+export const getStaticPaths = (async () => {
+  const gammes = await gammesTriees();
+  return gammes.map((gamme) => ({ params: { gamme: gamme.id }, props: { gamme } }));
+}) satisfies GetStaticPaths;
+
+const { gamme } = Astro.props;
+const { nom, accroche, photo, photoAlt, formats, aConfirmer, reformulation } = gamme.data;
+const { Content } = await render(gamme);
+const produits = await produitsDeLaGamme(gamme.id);
+const estAlcoolature = gamme.id === 'alcoolatures';
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: nom,
+    itemListElement: produits.map((p, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      url: new URL(urlProduit(p), SITE.url).href,
+      name: p.data.nom,
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Accueil', item: `${SITE.url}/` },
+      { '@type': 'ListItem', position: 2, name: 'Produits', item: `${SITE.url}/produits/` },
+      { '@type': 'ListItem', position: 3, name: nom, item: new URL(urlGamme(gamme.id), SITE.url).href },
+    ],
+  },
+];
+---
+
+<BaseLayout title={nom} description={`${nom} – ${accroche}`} image={photo} jsonLd={jsonLd}>
+  <div class="conteneur section intro">
+    <div class="intro__texte">
+      <FilAriane
+        elements={[
+          { label: 'Accueil', href: '/' },
+          { label: 'Produits', href: '/produits/' },
+          { label: nom, href: urlGamme(gamme.id) },
+        ]}
+      />
+      <h1>{nom}</h1>
+      <div class="contenu">
+        <Content />
+      </div>
+      {
+        reformulation && (
+          <p class="en-attente">
+            Une partie de ce texte est en attente de validation <span class="ref">(réf. {reformulation})</span>
+          </p>
+        )
+      }
+      {
+        aConfirmer.length > 0 && (
+          <div class="points">
+            <p>
+              <AConfirmer />
+            </p>
+            <ul>
+              {aConfirmer.map((point) => (
+                <li>{point}</li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+    </div>
+    <Image
+      class="intro__photo"
+      src={photo}
+      alt={photoAlt}
+      widths={[480, 720, 960]}
+      sizes="(min-width: 60rem) 28rem, 100vw"
+      loading="eager"
+    />
+  </div>
+
+  {
+    estAlcoolature && (
+      <div class="conteneur avertissement-gamme">
+        <AvertissementAlcoolature />
+      </div>
+    )
+  }
+
+  <section class="section section--vert" aria-labelledby="produits-titre">
+    <div class="conteneur">
+      <h2 id="produits-titre" class="titre-souligne">
+        {produits.length > 1 ? `Les ${nom.toLowerCase()}` : 'Le produit'}
+      </h2>
+      <ul class="grille" role="list">
+        {
+          produits.map((produit) => (
+            <li>
+              <CarteProduit produit={produit} />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  {
+    formats && (
+      <section class="section" aria-labelledby="formats-titre">
+        <div class="conteneur">
+          <h2 id="formats-titre" class="titre-souligne">
+            Formats et mode d’emploi
+          </h2>
+          <ul class="formats" role="list">
+            {formats.map((f) => (
+              <li class="format">
+                <h3>{f.nom}</h3>
+                <p class="format__contenu">{f.contenu}</p>
+                <p>{f.modeEmploi}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>
+
+<style>
+  .intro {
+    display: grid;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  @media (min-width: 60rem) {
+    .intro {
+      grid-template-columns: 1fr 28rem;
+      gap: 4rem;
+    }
+  }
+
+  .intro h1 {
+    margin-top: 1.25rem;
+  }
+
+  .intro__texte {
+    max-width: 44rem;
+  }
+
+  .contenu :global(blockquote) {
+    margin: 0 0 1.5rem;
+    font-family: var(--font-titre);
+    font-size: 1.6rem;
+    line-height: 1.25;
+    color: var(--ocre-texte);
+  }
+
+  .intro :global(.intro__photo) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: var(--rayon);
+    box-shadow: var(--ombre);
+  }
+
+  @media (max-width: 59.99rem) {
+    .intro :global(.intro__photo) {
+      aspect-ratio: 3 / 2;
+      order: -1;
+    }
+  }
+
+  .en-attente,
+  .points {
+    padding: 0.75rem 1rem;
+    border: 1.5px dashed var(--ocre-texte);
+    border-radius: 0.75rem;
+    font-size: 0.92rem;
+  }
+
+  .points {
+    margin-top: 1rem;
+  }
+
+  .points p {
+    margin: 0;
+  }
+
+  .points ul {
+    margin: 0.4rem 0 0;
+    padding-left: 1.2em;
+  }
+
+  .ref {
+    color: var(--encre-douce);
+  }
+
+  .avertissement-gamme {
+    padding-bottom: clamp(2.5rem, 2rem + 3vw, 4rem);
+  }
+
+  .grille {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 40rem) {
+    .grille {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .grille {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+  }
+
+  .formats {
+    display: grid;
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 52rem) {
+    .formats {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .format {
+    padding: 1.5rem;
+    border-radius: var(--rayon);
+    background: var(--vert-eau);
+  }
+
+  .format p {
+    margin-bottom: 0.5rem;
+  }
+
+  .format__contenu {
+    font-weight: 700;
+  }
+</style>

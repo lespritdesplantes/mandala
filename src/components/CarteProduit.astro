@@ -1,0 +1,152 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo.png';
+import AConfirmer from './AConfirmer.astro';
+import { formaterPrix, prixMinimum, urlProduit, type Produit } from '../lib/produits';
+
+interface Props {
+  produit: Produit;
+}
+
+const { produit } = Astro.props;
+const { nom, nomLatin, accroche, photos, prix, usageExterne } = produit.data;
+const photo = photos[0];
+const plusieursPrix = prix.length > 1;
+const prixProvisoire = prix.some((p) => p.aConfirmer);
+---
+
+<article class="carte">
+  <div class="carte__image">
+    {
+      photo ? (
+        <Image src={photo.src} alt="" widths={[320, 480, 720]} sizes="(min-width: 72rem) 17rem, (min-width: 40rem) 30vw, 50vw" />
+      ) : (
+        <div class="carte__sans-photo">
+          <Image src={logo} alt="" width={96} />
+        </div>
+      )
+    }
+    {usageExterne && <span class="carte__pastille">Usage externe</span>}
+  </div>
+  <div class="carte__texte">
+    <h3 class="carte__nom">
+      <a href={urlProduit(produit)}>{nom}</a>
+    </h3>
+    {nomLatin && <p class="carte__latin">{nomLatin}</p>}
+    {accroche && !nomLatin && <p class="carte__accroche">{accroche}</p>}
+    <p class="carte__prix">
+      {plusieursPrix && 'à partir de '}
+      {formaterPrix(prixMinimum(produit))}
+      {prixProvisoire && <AConfirmer />}
+    </p>
+  </div>
+</article>
+
+<style>
+  .carte {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    border-radius: var(--rayon);
+    background: var(--blanc-casse);
+    box-shadow: var(--ombre);
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+
+  .carte:hover,
+  .carte:focus-within {
+    transform: translateY(-3px);
+    box-shadow: 0 0.9rem 2rem rgb(2 43 66 / 0.14);
+  }
+
+  .carte__image {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    background: var(--vert-eau);
+  }
+
+  .carte__image :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .carte__sans-photo {
+    display: grid;
+    place-items: center;
+    height: 100%;
+    opacity: 0.55;
+  }
+
+  .carte__sans-photo :global(img) {
+    width: 6rem;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .carte__pastille {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+    background: var(--encre);
+    color: var(--blanc-casse);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .carte__texte {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 1rem 1.15rem 1.15rem;
+  }
+
+  .carte__nom {
+    margin: 0;
+    font-size: 1.9rem;
+  }
+
+  /* Toute la carte est cliquable, le lien reste le titre */
+  .carte__nom a {
+    color: var(--encre);
+    text-decoration: none;
+  }
+
+  .carte__nom a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .carte__nom a:focus-visible {
+    outline: none;
+  }
+
+  .carte:focus-within {
+    outline: 3px solid var(--ocre);
+    outline-offset: 3px;
+  }
+
+  .carte__latin,
+  .carte__accroche {
+    margin: 0;
+    color: var(--encre-douce);
+    font-size: 0.92rem;
+  }
+
+  .carte__latin {
+    font-style: italic;
+  }
+
+  .carte__prix {
+    margin: auto 0 0;
+    padding-top: 0.6rem;
+    font-weight: 800;
+  }
+</style>
